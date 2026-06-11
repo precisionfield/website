@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrecisionField</title>
+    <meta name="description" content="Procesamiento y análisis de imágenes satelitales y de drones para el agro.">
+    <meta name="keywords" content="dron, drones, agricultura de precisión, fotogrametría, imágenes satelitales, teledetección, precisionfield">
+    <meta name="author" content="PrecisionField">
+    <link rel="canonical" href="https://www.precisionfield.com.ar/index.html">
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260507">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/images/PFIcon.ico" type="image/x-icon">
+    <script src="assets/js/scripts.js?v=20260507" defer></script>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <header id="header">
+        <nav class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/logo.png"       alt="PrecisionField Logo" class="logo logo-dark">
+                <img src="assets/images/logo-color.png" alt="PrecisionField Logo" class="logo logo-light">
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="nav-link">Inicio</a></li>
+                <li><a href="#services" class="nav-link">Servicios</a></li>
+                <li class="nav-dropdown" id="navDropdown">
+                    <button class="nav-link nav-dropdown-toggle" id="navDropdownToggle" aria-haspopup="true" aria-expanded="false">
+                        <span>Herramientas</span>
+                        <i class="fas fa-chevron-down nav-arrow"></i>
+                    </button>
+                    <ul class="nav-dropdown-menu" id="navDropdownMenu">
+                        <li>
+                            <a href="calculadora-mavic3m.html">
+                                <span class="nav-dd-icon"><i class="fas fa-calculator"></i></span>
+                                <span class="nav-dd-text">
+                                    <strong>Calculadora de vuelo</strong>
+                                    <span>Planificá relevamientos con Mavic 3M</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="indices-mavic3m.html">
+                                <span class="nav-dd-icon"><i class="fas fa-layer-group"></i></span>
+                                <span class="nav-dd-text">
+                                    <strong>Guía de índices</strong>
+                                    <span>Qué índice usar en cada cultivo</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mapa-malezas-drones.html">
+                                <span class="nav-dd-icon"><i class="fas fa-spray-can"></i></span>
+                                <span class="nav-dd-text">
+                                    <strong>Mapa de malezas con dron</strong>
+                                    <span>Catálogo, calendario y ahorro</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#about" class="nav-link">Nosotros</a></li>
+                <li><a href="#contact" class="nav-link cta-link">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section id="home">
+        <div class="hero-content">
+            <span class="hero-eyebrow">Tecnología aplicada al agro</span>
+            <h1 class="hero-title">Procesamiento y análisis de imágenes satelitales y de drones</h1>
+            <p class="hero-sub">Soluciones precisas para la gestión inteligente de cultivos y recursos agropecuarios.</p>
+            <div class="hero-cta">
+                <a href="#services" class="btn btn-primary">Ver servicios</a>
+                <a href="#contact" class="btn btn-outline">Contactarnos</a>
+            </div>
+        </div>
+        <div class="hero-scroll-hint">
+            <span>Deslizá</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+        <div class="section-header">
+            <span class="section-label">Lo que hacemos</span>
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <p class="section-desc">Desde la adquisición de imágenes hasta el análisis avanzado, cubrimos todo el flujo de trabajo de la agricultura de precisión.</p>
+        </div>
+
+        <div class="service-grid">
+
+            <div class="service-card service-card-featured" data-delay="0">
+                <div class="card-image">
+                    <img src="assets/images/droneCampo.jpg" alt="Adquisición de imágenes con dron">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Adquisición de imágenes con Dron</h3>
+                    <ul>
+                        <li>Imágenes RGB de alta resolución</li>
+                        <li>Imágenes multiespectrales</li>
+                        <li>Índices espectrales (NDVI, GNDVI, NDWI, NDRE, NDSI, WSI)</li>
+                    </ul>
+                    <div class="card-actions">
+                        <a href="calculadora-mavic3m.html" class="card-action">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calculadora de vuelo</span>
+                        </a>
+                        <a href="indices-mavic3m.html" class="card-action">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Guía de índices</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="1">
+                <div class="card-image">
+                    <img src="assets/images/monitCult.jpg" alt="Monitoreo de cultivos">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Monitoreo de Cultivos</h3>
+                    <ul>
+                        <li>Evaluación de calidad de implantación</li>
+                        <li>Evaluación de emergencia</li>
+                        <li>Mapa de cobertura de suelo</li>
+                        <li>Monitoreo del crecimiento</li>
+                        <li>Estimación de rendimiento</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="2">
+                <div class="card-image">
+                    <img src="assets/images/estSanit.jpg" alt="Detección de anomalías">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Detección de Anomalías</h3>
+                    <ul>
+                        <li>Detección de déficit nutricional</li>
+                        <li>Detección de plagas y enfermedades</li>
+                        <li>Detección de estrés hídrico</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="3">
+                <div class="card-image">
+                    <img src="assets/images/mapPres.jpg" alt="Optimización de insumos">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Optimización de Insumos</h3>
+                    <ul>
+                        <li>Mapa de malezas y prescripción de herbicidas</li>
+                        <li>Prescripción de fertilizantes (VRA)</li>
+                        <li>Siembra de tasa variable</li>
+                        <li>Mapa de ambientes</li>
+                        <li>Diseño de muestreo de suelo</li>
+                    </ul>
+                    <div class="card-actions">
+                        <a href="mapa-malezas-drones.html" class="card-action">
+                            <i class="fas fa-spray-can"></i>
+                            <span>Mapa de malezas con dron</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="4">
+                <div class="card-image">
+                    <img src="assets/images/mapRinde.jpg" alt="Mapas de rendimiento">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Mapas de Rendimiento</h3>
+                    <ul>
+                        <li>Depuración de datos</li>
+                        <li>Interpolación y suavizado</li>
+                        <li>Análisis multianual</li>
+                        <li>Correlación NDVI - Rinde</li>
+                        <li>Delimitación de ambientes productivos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="5">
+                <div class="card-image">
+                    <img src="assets/images/inund.jpg" alt="Daños climáticos">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Daños Climáticos</h3>
+                    <ul>
+                        <li>Evaluación de granizo, heladas, inundaciones e incendios</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="6">
+                <div class="card-image">
+                    <img src="assets/images/pulv.jpg" alt="Prácticas agrícolas">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Prácticas Agrícolas</h3>
+                    <ul>
+                        <li>Monitoreo de labores, siembra, cosecha, riego</li>
+                        <li>Evaluación de eficacia de control de malezas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="7">
+                <div class="card-image">
+                    <img src="assets/images/frutal.jpg" alt="Forestales y frutícolas">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Forestales y Frutícolas</h3>
+                    <ul>
+                        <li>Área proyectada de copa</li>
+                        <li>Mapa de altura de árboles</li>
+                        <li>Conteo de árboles</li>
+                        <li>Estado sanitario y nutricional</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="8">
+                <div class="card-image">
+                    <img src="assets/images/fotogra.jpg" alt="Fotogrametría">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Fotogrametría con Dron</h3>
+                    <ul>
+                        <li>Ortomosaicos en color verdadero</li>
+                        <li>Mapas 3D, modelos digitales de elevación</li>
+                        <li>Inspección de infraestructura</li>
+                        <li>Identificación de erosión de suelo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-card" data-delay="9">
+                <div class="card-image">
+                    <img src="assets/images/animales.jpg" alt="Ganadería">
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>Ganadería</h3>
+                    <ul>
+                        <li>Sectorización para pastoreo en franjas</li>
+                        <li>Monitoreo de oferta forrajera</li>
+                        <li>Análisis de vigor y biomasa del forraje</li>
+                        <li>Conteo de animales</li>
+                        <li>Estimación del peso del ganado</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section id="tools">
+        <div class="section-header">
+            <span class="section-label">Herramientas interactivas</span>
+            <h2 class="section-title">Recursos para productores y asesores</h2>
+            <p class="section-desc">Herramientas web pensadas para que aproveches al máximo tu DJI Mavic 3M, desde la planificación del vuelo hasta la elección del índice espectral correcto.</p>
+        </div>
+
+        <div class="tools-grid">
+            <a href="calculadora-mavic3m.html" class="tool-card">
+                <div class="tool-card-visual tool-visual-calc">
+                    <div class="tool-visual-pattern"></div>
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="tool-card-body">
+                    <span class="tool-tag">DJI Mavic 3M</span>
+                    <h3>Calculadora de vuelo y presupuesto</h3>
+                    <p>Estimá baterías, tiempo, GSD, footprint y costo de procesamiento para tu próximo relevamiento. Cargá la superficie y los parámetros, y obtené todos los cálculos al instante.</p>
+                    <div class="tool-features">
+                        <span><i class="fas fa-check"></i> Geometría de vuelo</span>
+                        <span><i class="fas fa-check"></i> Logística y baterías</span>
+                        <span><i class="fas fa-check"></i> Cotización online</span>
+                    </div>
+                    <span class="tool-link">Abrir calculadora <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+            <a href="indices-mavic3m.html" class="tool-card">
+                <div class="tool-card-visual tool-visual-idx">
+                    <div class="tool-visual-pattern"></div>
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="tool-card-body">
+                    <span class="tool-tag">DJI Mavic 3M</span>
+                    <h3>Guía interactiva de índices espectrales</h3>
+                    <p>Qué índice espectral usar, cuándo y para qué cultivo. Filtrá por cultivo o etapa fenológica, o encontrá el índice ideal según el problema agronómico que querés resolver.</p>
+                    <div class="tool-features">
+                        <span><i class="fas fa-check"></i> NDVI, NDRE, GNDVI, OSAVI...</span>
+                        <span><i class="fas fa-check"></i> Por cultivo y fenología</span>
+                        <span><i class="fas fa-check"></i> Bibliografía técnica</span>
+                    </div>
+                    <span class="tool-link">Abrir guía <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+
+            <a href="mapa-malezas-drones.html" class="tool-card">
+                <div class="tool-card-visual tool-visual-malezas">
+                    <div class="tool-visual-pattern"></div>
+                    <i class="fas fa-spray-can"></i>
+                </div>
+                <div class="tool-card-body">
+                    <span class="tool-tag">Zona núcleo</span>
+                    <h3>Mapa de malezas con dron</h3>
+                    <p>Catálogo de 18 malezas resistentes y tolerantes según REM 2025, calendario de mapeo por cultivo y calculadora de ahorro por aplicación sitio-específica.</p>
+                    <div class="tool-features">
+                        <span><i class="fas fa-check"></i> Catálogo REM 2025</span>
+                        <span><i class="fas fa-check"></i> Línea de tiempo por cultivo</span>
+                        <span><i class="fas fa-check"></i> Calculadora de ahorro USD/ha</span>
+                    </div>
+                    <span class="tool-link">Abrir herramienta <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="about-top">
+            <span class="section-label light">Quiénes somos</span>
+            <h2 class="section-title light">Sobre Nosotros</h2>
+        </div>
+
+        <div class="about-grid">
+            <div class="about-card">
+                <div class="about-icon"><i class="fas fa-bullseye"></i></div>
+                <h3>Misión</h3>
+                <p>Transformar el sector agropecuario mediante la integración de tecnologías avanzadas: imágenes satelitales, drones y análisis de datos. Proporcionamos soluciones precisas y sostenibles para la gestión de cultivos, optimizando recursos y mejorando la productividad.</p>
+            </div>
+            <div class="about-card">
+                <div class="about-icon"><i class="fas fa-binoculars"></i></div>
+                <h3>Visión</h3>
+                <p>Un futuro en el que cada productor agropecuario acceda a información precisa y oportuna, maximizando rendimientos y minimizando el impacto ambiental, contribuyendo a la seguridad alimentaria global.</p>
+            </div>
+            <div class="about-card">
+                <div class="about-icon"><i class="fas fa-leaf"></i></div>
+                <h3>Valores</h3>
+                <p><strong>Innovación</strong> · adoptamos las últimas tecnologías.<br>
+                <strong>Calidad</strong> · resultados precisos y confiables.<br>
+                <strong>Sostenibilidad</strong> · cuidado del medio ambiente.<br>
+                <strong>Colaboración</strong> · soluciones personalizadas.<br>
+                <strong>Integridad</strong> · transparencia y ética.</p>
+            </div>
+            <div class="about-card">
+                <div class="about-icon"><i class="fas fa-handshake"></i></div>
+                <h3>Compromiso</h3>
+                <p>Cada campo y cada cultivo es único. Nos esforzamos por ofrecer soluciones adaptadas a las necesidades específicas de cada productor, usando colaboración y tecnología de vanguardia.</p>
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h3 class="team-title">El Equipo</h3>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="assets/images/member1.jpg" alt="Emiliano Arduini">
+                    </div>
+                    <h4>Emiliano Arduini</h4>
+                    <p>Ingeniero Agrónomo</p>
+                    <p>Especialista en Teledetección y Sistemas de Información Geográfica</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="assets/images/member2.jpg" alt="Damián Gherscovic">
+                    </div>
+                    <h4>Damián Gherscovic</h4>
+                    <p>Licenciado en Ciencias Aplicadas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="contact-inner">
+            <div class="contact-text">
+                <span class="section-label">Hablemos</span>
+                <h2 class="section-title">Consultas</h2>
+                <p>Estamos disponibles para responder tus preguntas y ayudarte a encontrar la solución que tu campo necesita.</p>
+            </div>
+            <div class="contact-cards">
+                <a id="email-link" href="#" class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <span id="email-text">precisionfieldar [arroba] gmail.com</span>
+                </a>
+                <a href="https://wa.me/5491154251823" target="_blank" class="contact-card">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>+54 9 11 5425-1823</span>
+                </a>
+                <a href="tel:+5491154251823" class="contact-card">
+                    <i class="fas fa-phone"></i>
+                    <span>+54 9 11 5425-1823 / +54 9 11 5348-2322</span>
+                </a>
+                <a href="https://www.instagram.com/precisionfield" target="_blank" class="contact-card">
+                    <i class="fab fa-instagram"></i>
+                    <span>@precisionfield</span>
+                </a>
+                <div class="contact-card no-link">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Buenos Aires, Argentina</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <img src="assets/images/logo.png" alt="PrecisionField" class="footer-logo">
+            <div class="footer-center">
+                <p class="footer-copy">&copy; 2026 PrecisionField&reg;. Todos los derechos reservados.</p>
+                <p class="footer-tagline">Procesamiento y an&aacute;lisis de im&aacute;genes satelitales y de drones para el agro</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Vuelo Mavic 3M | PrecisionField</title>
+    <meta name="description" content="Planificá tu vuelo con el DJI Mavic 3M y conocé el costo de procesamiento. Calculadora interactiva de GSD, baterías, almacenamiento y presupuesto.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-deep:    #1a3a2a;
+            --green-mid:     #2d5a40;
+            --green-soft:    #4a7c59;
+            --green-light:   #7eb897;
+            --green-pale:    #e8f2ec;
+            --earth-dark:    #5c3d1e;
+            --earth-mid:     #b8702b;
+            --earth-light:   #d4956a;
+            --earth-pale:    #faf3ec;
+            --cream:         #f7f4ef;
+            --white:         #ffffff;
+            --text-dark:     #1c2820;
+            --text-mid:      #3d5248;
+            --text-light:    #6b8878;
+            --border:        #d4e2da;
+            --shadow-sm:     0 2px 12px rgba(26,58,42,0.08);
+            --shadow-md:     0 8px 32px rgba(26,58,42,0.12);
+            --shadow-lg:     0 20px 60px rgba(26,58,42,0.16);
+            --radius-sm:     6px;
+            --radius-md:     12px;
+            --radius-lg:     20px;
+            --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        ul { list-style: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+        a { color: inherit; text-decoration: none; }
+        input { font-family: inherit; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            line-height: 1.2;
+            color: var(--green-deep);
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--earth-mid);
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── HEADER / LOGO ── */
+        .tool-header {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            padding: 1.5rem 2rem;
+        }
+        .tool-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .tool-logo {
+            height: 52px;
+            width: auto;
+            display: block;
+        }
+        .header-back {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+        .header-back:hover { color: var(--white); }
+
+        /* ── HERO ── */
+        .tool-hero {
+            background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-hero::before {
+            content: '';
+            position: absolute;
+            top: -120px; right: -120px;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: rgba(126,184,151,0.08);
+            pointer-events: none;
+        }
+        .tool-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(184,112,43,0.06);
+            pointer-events: none;
+        }
+        .tool-hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .tool-hero .eyebrow { color: var(--green-light); }
+        .tool-hero h1 {
+            font-size: clamp(2rem, 4.5vw, 3.4rem);
+            color: var(--white);
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+        .tool-hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.78);
+            max-width: 640px;
+        }
+
+        /* ── SECTION SHELL ── */
+        section.tool-section {
+            padding: 4rem 2rem;
+        }
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .step-number {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--green-deep);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-text h2 {
+            font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+            margin-bottom: 0.2rem;
+        }
+        .step-text p {
+            font-size: 0.92rem;
+            color: var(--text-light);
+        }
+
+        /* ── STEP 1: SERVICE MODE CARDS ── */
+        .mode-section {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+        }
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .mode-card {
+            background: var(--cream);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--earth-mid);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition);
+        }
+        .mode-card:hover {
+            border-color: var(--green-light);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+        .mode-card:hover::before { transform: scaleX(1); }
+        .mode-card.active {
+            background: var(--white);
+            border-color: var(--green-deep);
+            box-shadow: var(--shadow-md);
+        }
+        .mode-card.active::before {
+            transform: scaleX(1);
+            background: var(--green-deep);
+        }
+        .mode-card-head {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+        .mode-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--earth-pale);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--earth-mid);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .mode-card.active .mode-icon {
+            background: var(--green-deep);
+            color: var(--green-light);
+        }
+        .mode-card h3 {
+            font-size: 1.1rem;
+            color: var(--green-deep);
+            font-weight: 700;
+        }
+        .mode-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            flex: 1;
+        }
+        .mode-card-tags {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border);
+        }
+        .mode-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            background: var(--green-pale);
+            color: var(--green-deep);
+            padding: 0.18rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        .mode-tag.custom {
+            background: var(--earth-pale);
+            color: var(--earth-dark);
+        }
+
+        /* ── STEP 2: PARAMS ── */
+        .params-section {
+            background: var(--cream);
+        }
+        .params-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        .params-panel, .who-panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+        }
+
+        .param-group {
+            margin-bottom: 1.4rem;
+        }
+        .param-group:last-child { margin-bottom: 0; }
+        .param-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .param-label-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            font-weight: 700;
+        }
+        .param-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--green-deep);
+            font-weight: 700;
+            background: var(--green-pale);
+            padding: 0.15rem 0.55rem;
+            border-radius: 4px;
+        }
+        .param-input {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--cream);
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+        .param-input:focus {
+            outline: none;
+            border-color: var(--green-soft);
+            background: var(--white);
+            box-shadow: 0 0 0 3px var(--green-pale);
+        }
+        .slider-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .slider-row input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+            cursor: pointer;
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--green-deep);
+            cursor: pointer;
+            border: 3px solid var(--white);
+            box-shadow: 0 2px 6px rgba(26,58,42,0.3);
+            transition: transform 0.2s ease;
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        .slider-row input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--green-deep);
+            cursor: pointer;
+            border: 3px solid var(--white);
+            box-shadow: 0 2px 6px rgba(26,58,42,0.3);
+        }
+
+        .param-row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .camera-toggle {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            gap: 3px;
+        }
+        .camera-toggle button {
+            padding: 0.55rem 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-mid);
+            border-radius: 4px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .camera-toggle button.active {
+            background: var(--green-deep);
+            color: var(--white);
+            box-shadow: 0 2px 6px rgba(45,90,64,0.25);
+        }
+
+        /* WHO FLIES PANEL */
+        .who-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 0.9rem;
+        }
+        .who-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .who-option {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            background: var(--cream);
+        }
+        .who-option:hover {
+            border-color: var(--green-light);
+        }
+        .who-option.active {
+            background: var(--white);
+            border-color: var(--green-deep);
+        }
+        .who-radio {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            position: relative;
+            margin-top: 3px;
+            transition: var(--transition);
+        }
+        .who-option.active .who-radio {
+            border-color: var(--green-deep);
+        }
+        .who-option.active .who-radio::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 8px;
+            height: 8px;
+            background: var(--green-deep);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .who-option-content h4 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--green-deep);
+            margin-bottom: 0.2rem;
+        }
+        .who-option-content p {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            line-height: 1.45;
+        }
+
+        /* ── STEP 3: RESULTS ── */
+        .results-section {
+            background: var(--green-deep);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        .results-section::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 400px; height: 400px;
+            border-radius: 50%;
+            background: rgba(126,184,151,0.06);
+            pointer-events: none;
+        }
+        .results-section .step-number {
+            background: var(--green-light);
+            color: var(--green-deep);
+        }
+        .results-section h2 { color: var(--white); }
+        .results-section .step-text p { color: rgba(255,255,255,0.6); }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.4fr;
+            gap: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            backdrop-filter: blur(8px);
+        }
+        .result-card-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--green-light);
+            font-weight: 700;
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .result-card-title i { font-size: 0.85rem; }
+
+        .metric {
+            margin-bottom: 1.1rem;
+            padding-bottom: 1.1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .metric:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .metric-label {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .metric-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.1;
+        }
+        .metric-value .unit {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.55);
+            margin-left: 0.3rem;
+        }
+        .metric-secondary {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 0.3rem;
+        }
+
+        /* PRICE CARD - the star */
+        .result-card.price-card {
+            background: linear-gradient(135deg, rgba(184,112,43,0.18) 0%, rgba(126,184,151,0.10) 100%);
+            border: 1px solid rgba(212,149,106,0.35);
+            display: flex;
+            flex-direction: column;
+        }
+        .price-card .result-card-title {
+            color: var(--earth-light);
+        }
+        .price-breakdown {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin-bottom: 1.3rem;
+        }
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.78);
+            padding-bottom: 0.55rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+        }
+        .breakdown-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .breakdown-row .br-amount {
+            font-family: 'Space Mono', monospace;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .price-total {
+            background: rgba(255,255,255,0.06);
+            border-radius: var(--radius-sm);
+            padding: 1.3rem;
+            margin-top: auto;
+        }
+        .price-total-label {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 0.3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price-total-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+        }
+        .price-total-amount .currency {
+            font-size: 1.3rem;
+            color: var(--earth-light);
+            margin-right: 0.3rem;
+        }
+        .price-total-amount .perha {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.55);
+            font-weight: 400;
+            margin-left: 0.6rem;
+        }
+        .price-warning {
+            margin-top: 0.8rem;
+            padding: 0.6rem 0.8rem;
+            background: rgba(212,149,106,0.15);
+            border-left: 3px solid var(--earth-light);
+            border-radius: 4px;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.78);
+        }
+        .price-warning i {
+            color: var(--earth-light);
+            margin-right: 0.4rem;
+        }
+        .price-custom {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .price-custom h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+        .price-custom p {
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 1.2rem;
+        }
+
+        .deliverables-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1.2rem;
+        }
+        .deliverable-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.78);
+        }
+        .deliverable-item i {
+            color: var(--green-light);
+            font-size: 0.75rem;
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            background: linear-gradient(135deg, var(--earth-pale) 0%, var(--cream) 100%);
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        .cta-inner {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            font-size: 1.05rem;
+            color: var(--text-mid);
+            margin-bottom: 2rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 1.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .btn-primary {
+            background: var(--green-deep);
+            color: var(--white);
+        }
+        .btn-primary:hover {
+            background: var(--green-mid);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--green-deep);
+            border: 2px solid var(--green-deep);
+        }
+        .btn-outline:hover {
+            background: var(--green-deep);
+            color: var(--white);
+        }
+        .btn-light {
+            background: var(--green-light);
+            color: var(--green-deep);
+        }
+        .btn-light:hover {
+            background: var(--white);
+            transform: translateY(-2px);
+        }
+
+        /* ── DISCLAIMER ── */
+        .disclaimer-section {
+            background: var(--white);
+            padding: 2.5rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .disclaimer-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            text-align: center;
+        }
+        .disclaimer-inner strong { color: var(--green-deep); }
+
+        /* ── FOOTER ── */
+        .tool-footer {
+            background: var(--green-deep);
+            padding: 2.5rem 2rem;
+        }
+        .tool-footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .footer-logo {
+            height: 40px;
+            opacity: 0.85;
+        }
+        .tool-footer p {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.05em;
+        }
+        .tool-footer a { color: var(--green-light); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1000px) {
+            .params-grid { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr 1fr; }
+            .results-grid .price-card { grid-column: 1 / -1; }
+        }
+        @media (max-width: 700px) {
+            .tool-header { padding: 1rem 1.25rem; }
+            .tool-logo { height: 42px; }
+            .tool-hero { padding: 6rem 1.25rem 3rem; }
+            section.tool-section { padding: 3rem 1.25rem; }
+            .results-grid { grid-template-columns: 1fr; }
+            .param-row-2col { grid-template-columns: 1fr; }
+            .price-total-amount { font-size: 2rem; }
+            .tool-footer-inner { flex-direction: column; text-align: center; }
+            .step-number { width: 38px; height: 38px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="tool-header">
+        <div class="tool-header-inner">
+            <a href="index.html"><img src="assets/images/logo.png" alt="PrecisionField" class="tool-logo"></a>
+            <a href="index.html" class="header-back">
+                <i class="fas fa-arrow-left"></i> Volver al sitio
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="tool-hero">
+        <div class="tool-hero-inner">
+            <span class="eyebrow">Herramienta interactiva</span>
+            <h1>Calculadora de vuelo y presupuesto · Mavic 3M</h1>
+            <p>Planificá tu relevamiento con el DJI Mavic 3M en pocos clics: elegí el objetivo, ajustá los parámetros y conocé al instante cuántas baterías necesitás, cuánto tiempo te lleva y cuánto cuesta el procesamiento agronómico.</p>
+        </div>
+    </section>
+
+    <!-- STEP 1: SERVICE MODE -->
+    <section class="tool-section mode-section">
+        <div class="section-inner">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-text">
+                    <h2>¿Qué querés relevar?</h2>
+                    <p>Elegí el objetivo del vuelo y cargamos automáticamente los parámetros agronómicos óptimos.</p>
+                </div>
+            </div>
+            <div class="mode-grid" id="mode-grid"></div>
+        </div>
+    </section>
+
+    <!-- STEP 2: PARAMS -->
+    <section class="tool-section params-section">
+        <div class="section-inner">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-text">
+                    <h2>Ajustá los parámetros</h2>
+                    <p>Los valores cargados son los recomendados para el modelo elegido. Podés modificarlos si querés explorar otras opciones.</p>
+                </div>
+            </div>
+            <div class="params-grid">
+                <div class="params-panel">
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span class="param-label-text">Superficie a relevar</span>
+                            <span class="param-value" id="area-display">100 ha</span>
+                        </div>
+                        <input type="number" id="area-input" class="param-input" min="1" max="10000" value="100" step="1">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span class="param-label-text">Altura de vuelo</span>
+                            <span class="param-value" id="altitude-display">100 m</span>
+                        </div>
+                        <div class="slider-row">
+                            <input type="range" id="altitude-slider" min="30" max="200" value="100" step="5">
+                        </div>
+                    </div>
+
+                    <div class="param-row-2col">
+                        <div class="param-group">
+                            <div class="param-label">
+                                <span class="param-label-text">Solap. frontal</span>
+                                <span class="param-value" id="frontal-display">75%</span>
+                            </div>
+                            <div class="slider-row">
+                                <input type="range" id="frontal-slider" min="50" max="95" value="75" step="5">
+                            </div>
+                        </div>
+                        <div class="param-group">
+                            <div class="param-label">
+                                <span class="param-label-text">Solap. lateral</span>
+                                <span class="param-value" id="lateral-display">70%</span>
+                            </div>
+                            <div class="slider-row">
+                                <input type="range" id="lateral-slider" min="50" max="95" value="70" step="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="param-row-2col">
+                        <div class="param-group">
+                            <div class="param-label">
+                                <span class="param-label-text">Velocidad</span>
+                                <span class="param-value" id="speed-display">10 m/s</span>
+                            </div>
+                            <div class="slider-row">
+                                <input type="range" id="speed-slider" min="5" max="15" value="10" step="1">
+                            </div>
+                        </div>
+                        <div class="param-group">
+                            <div class="param-label">
+                                <span class="param-label-text">Cámara</span>
+                            </div>
+                            <div class="camera-toggle" id="camera-toggle">
+                                <button data-cam="rgb">RGB</button>
+                                <button data-cam="multi" class="active">Multi</button>
+                                <button data-cam="both">Ambas</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="who-panel">
+                    <div class="who-title">¿Quién hace el vuelo?</div>
+                    <div class="who-options">
+                        <div class="who-option active" data-who="client">
+                            <div class="who-radio"></div>
+                            <div class="who-option-content">
+                                <h4>Tengo mi Mavic 3M</h4>
+                                <p>Vos volás y nos pasás las imágenes. Nosotros las procesamos y entregamos los mapas.</p>
+                            </div>
+                        </div>
+                        <div class="who-option" data-who="precisionfield">
+                            <div class="who-radio"></div>
+                            <div class="who-option-content">
+                                <h4>Que vuele PrecisionField</h4>
+                                <p>Servicio integral: planificamos, volamos, procesamos y entregamos. Mínimo 50 ha.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STEP 3: RESULTS -->
+    <section class="tool-section results-section">
+        <div class="section-inner">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-text">
+                    <h2>Resultados del relevamiento</h2>
+                    <p>Cálculos en tiempo real basados en las especificaciones reales del DJI Mavic 3M.</p>
+                </div>
+            </div>
+
+            <div class="results-grid">
+
+                <!-- GEOMETRY -->
+                <div class="result-card">
+                    <div class="result-card-title">
+                        <i class="fas fa-vector-square"></i> Geometría
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">GSD (resolución)</div>
+                        <div class="metric-value" id="gsd-main">—</div>
+                        <div class="metric-secondary" id="gsd-secondary">—</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Footprint por imagen</div>
+                        <div class="metric-value" id="footprint">—</div>
+                        <div class="metric-secondary">Ancho × alto en el suelo</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Separación entre líneas</div>
+                        <div class="metric-value" id="line-spacing">—</div>
+                        <div class="metric-secondary" id="shot-spacing">—</div>
+                    </div>
+                </div>
+
+                <!-- LOGISTICS -->
+                <div class="result-card">
+                    <div class="result-card-title">
+                        <i class="fas fa-helicopter"></i> Logística
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Tiempo total estimado</div>
+                        <div class="metric-value" id="flight-time">—</div>
+                        <div class="metric-secondary">Incluye giros y aceleraciones</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Baterías necesarias</div>
+                        <div class="metric-value" id="batteries">—</div>
+                        <div class="metric-secondary">Buffer 20% por seguridad</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Imágenes capturadas</div>
+                        <div class="metric-value" id="num-images">—</div>
+                        <div class="metric-secondary" id="storage">—</div>
+                    </div>
+                </div>
+
+                <!-- PRICE -->
+                <div class="result-card price-card">
+                    <div class="result-card-title">
+                        <i class="fas fa-file-invoice-dollar"></i> Cotización PrecisionField
+                    </div>
+                    <div id="price-content"></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <span class="eyebrow">¿Listo para procesar tu vuelo?</span>
+            <h2>Convertí tus imágenes en decisiones agronómicas</h2>
+            <p>Pasanos las imágenes de tu Mavic 3M o coordinamos el vuelo. En PrecisionField transformamos cada relevamiento en mapas listos para tomar decisiones a campo.</p>
+            <div class="cta-buttons">
+                <a id="cta-whatsapp" href="https://wa.me/5491154251823" target="_blank" class="btn btn-primary">
+                    <i class="fab fa-whatsapp"></i> Pedir presupuesto por WhatsApp
+                </a>
+                <a id="cta-email" href="#" class="btn btn-outline">
+                    <i class="fas fa-envelope"></i> Enviar consulta por mail
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <section class="disclaimer-section">
+        <div class="disclaimer-inner">
+            <strong>Sobre los cálculos:</strong> los valores son estimaciones basadas en las especificaciones técnicas del DJI Mavic 3M (cámara RGB 20 MP 4/3" f/12.29 mm · cámara multiespectral 5 MP 1/2.8" f/4.34 mm) y en la experiencia operativa de PrecisionField. La autonomía real por batería se estima en 25–30 minutos efectivos por las condiciones típicas de viento y temperatura. Los precios indicados corresponden a procesamiento estándar; trabajos con requerimientos particulares o entregables adicionales se cotizan por separado.
+        </div>
+    </section>
+
+    <footer class="tool-footer">
+        <div class="tool-footer-inner">
+            <img src="assets/images/logo.png" alt="PrecisionField" class="footer-logo">
+            <p>&copy; 2026 <a href="index.html">PrecisionField&reg;</a> · Procesamiento y análisis de imágenes satelitales y de drones para el agro</p>
+        </div>
+    </footer>
+
+    <script>
+    // ─────────────────────────────────────────────────────────────
+    //  MAVIC 3M REAL SPECS
+    // ─────────────────────────────────────────────────────────────
+    const SPECS = {
+        rgb: {
+            sensorWidth: 17.3,    // mm (4/3" CMOS)
+            sensorHeight: 13.0,
+            focal: 12.29,         // mm
+            imgWidth: 5280,       // px
+            imgHeight: 3956,
+            filesPerShot: 1,      // 1 JPG per shot trigger
+            mbPerFile: 12         // ~12 MB per RGB JPG
+        },
+        multi: {
+            sensorWidth: 5.6,     // mm (1/2.8")
+            sensorHeight: 4.2,
+            focal: 4.34,          // mm
+            imgWidth: 2592,
+            imgHeight: 1944,
+            filesPerShot: 4,      // G, R, RedEdge, NIR (4 separate TIFFs per trigger)
+            mbPerFile: 3          // ~3 MB per band TIFF
+        },
+        batteryEffectiveMin: 27,    // realistic with buffer for wind
+        batterySafetyFactor: 1.20,  // 20% safety
+        speedDefault: 10
+    };
+
+    // ─────────────────────────────────────────────────────────────
+    //  SERVICE MODES
+    // ─────────────────────────────────────────────────────────────
+    const MODES = [
+        {
+            id: 'malezas',
+            icon: 'fa-spray-can',
+            title: 'Mapa de malezas',
+            desc: 'Detección y cartografía de focos de malezas en barbecho para prescripción variable de herbicidas.',
+            altitude: 60, frontal: 80, lateral: 75, speed: 8, camera: 'multi',
+            deliverables: ['Ortomosaico RGB', 'Mapa NDVI', 'Mapa de malezas'],
+            priceClient: 2.8,
+            tags: ['Barbecho', 'Pre-siembra']
+        },
+        {
+            id: 'ambientes',
+            icon: 'fa-layer-group',
+            title: 'Zonificación de ambientes',
+            desc: 'Delimitación de zonas de manejo a partir de índices espectrales para prescripciones variables.',
+            altitude: 100, frontal: 75, lateral: 70, speed: 10, camera: 'multi',
+            deliverables: ['Mapa NDVI', 'Mapa NDRE', 'Zonificación 3-5 ambientes'],
+            priceClient: 3.0,
+            tags: ['Vegetativo', 'Multi-temporal']
+        },
+        {
+            id: 'estres',
+            icon: 'fa-triangle-exclamation',
+            title: 'Detección de estrés',
+            desc: 'Identificación temprana de problemas nutricionales o sanitarios antes de ser visibles a campo.',
+            altitude: 80, frontal: 80, lateral: 75, speed: 8, camera: 'multi',
+            deliverables: ['Mapa NDRE', 'Mapa NDVI', 'Mapa de anomalías'],
+            priceClient: 2.8,
+            tags: ['Vegetativo', 'Floración']
+        },
+        {
+            id: 'fallas',
+            icon: 'fa-seedling',
+            title: 'Fallas de implantación',
+            desc: 'Evaluación de stand, conteo de plantas y mapeo de fallas de siembra en etapas tempranas.',
+            altitude: 50, frontal: 80, lateral: 75, speed: 6, camera: 'rgb',
+            deliverables: ['Ortomosaico RGB', 'Mapa de fallas', 'Estimación de stand'],
+            priceClient: 3.0,
+            tags: ['Emergencia', 'V1-V4']
+        },
+        {
+            id: 'topografia',
+            icon: 'fa-mountain',
+            title: 'Topografía / MDE',
+            desc: 'Modelo digital de elevación, ortomosaico georreferenciado y curvas de nivel para diseño de obras.',
+            altitude: 100, frontal: 80, lateral: 70, speed: 10, camera: 'rgb',
+            deliverables: ['Ortomosaico RGB', 'MDE', 'Curvas de nivel'],
+            priceClient: 2.8,
+            tags: ['Cualquier época']
+        },
+        {
+            id: 'custom',
+            icon: 'fa-sliders',
+            title: 'Vuelo personalizado',
+            desc: 'Definí vos los parámetros para un objetivo particular. Cotización a medida según tus necesidades.',
+            altitude: 80, frontal: 75, lateral: 70, speed: 8, camera: 'multi',
+            deliverables: ['A definir según objetivo'],
+            priceClient: null,
+            tags: ['A medida'],
+            custom: true
+        }
+    ];
+
+    // ─────────────────────────────────────────────────────────────
+    //  STATE
+    // ─────────────────────────────────────────────────────────────
+    const state = {
+        modeId: 'ambientes',
+        area: 100,
+        altitude: 100,
+        frontal: 75,
+        lateral: 70,
+        speed: 10,
+        camera: 'multi',
+        whoFlies: 'client'
+    };
+
+    const PRICE_FULL_SERVICE = 6.5;
+    const FULL_SERVICE_MIN_HA = 50;
+
+    // ─────────────────────────────────────────────────────────────
+    //  RENDER MODES
+    // ─────────────────────────────────────────────────────────────
+    function renderModes() {
+        const grid = document.getElementById('mode-grid');
+        grid.innerHTML = MODES.map(m => `
+            <article class="mode-card ${m.id === state.modeId ? 'active' : ''}" data-mode="${m.id}">
+                <div class="mode-card-head">
+                    <div class="mode-icon"><i class="fas ${m.icon}"></i></div>
+                    <h3>${m.title}</h3>
+                </div>
+                <div class="mode-card-desc">${m.desc}</div>
+                <div class="mode-card-tags">
+                    ${m.tags.map(t => `<span class="mode-tag ${m.custom ? 'custom' : ''}">${t}</span>`).join('')}
+                </div>
+            </article>
+        `).join('');
+
+        grid.querySelectorAll('.mode-card').forEach(card => {
+            card.addEventListener('click', () => selectMode(card.dataset.mode));
+        });
+    }
+
+    function selectMode(modeId) {
+        const mode = MODES.find(m => m.id === modeId);
+        if (!mode) return;
+        state.modeId = modeId;
+        state.altitude = mode.altitude;
+        state.frontal = mode.frontal;
+        state.lateral = mode.lateral;
+        state.speed = mode.speed;
+        state.camera = mode.camera;
+        syncInputs();
+        renderModes();
+        compute();
+    }
+
+    function syncInputs() {
+        document.getElementById('area-input').value = state.area;
+        document.getElementById('altitude-slider').value = state.altitude;
+        document.getElementById('frontal-slider').value = state.frontal;
+        document.getElementById('lateral-slider').value = state.lateral;
+        document.getElementById('speed-slider').value = state.speed;
+        document.querySelectorAll('#camera-toggle button').forEach(b => {
+            b.classList.toggle('active', b.dataset.cam === state.camera);
+        });
+        updateLabels();
+    }
+
+    function updateLabels() {
+        document.getElementById('area-display').textContent = `${state.area} ha`;
+        document.getElementById('altitude-display').textContent = `${state.altitude} m`;
+        document.getElementById('frontal-display').textContent = `${state.frontal}%`;
+        document.getElementById('lateral-display').textContent = `${state.lateral}%`;
+        document.getElementById('speed-display').textContent = `${state.speed} m/s`;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  COMPUTATIONS
+    // ─────────────────────────────────────────────────────────────
+    // GSD (cm/px) = (sensorWidth_mm × altitude_m × 100) / (focal_mm × imgWidth_px)
+    function gsd(spec, altitude) {
+        return (spec.sensorWidth * altitude * 100) / (spec.focal * spec.imgWidth);
+    }
+
+    // Footprint (m × m)
+    function footprint(spec, altitude) {
+        const w = (spec.sensorWidth * altitude) / spec.focal;
+        const h = (spec.sensorHeight * altitude) / spec.focal;
+        return { w, h };
+    }
+
+    // Choose limiting spec based on selected camera
+    function getActiveSpec() {
+        if (state.camera === 'rgb') return SPECS.rgb;
+        // For 'multi' or 'both', the multi camera limits the footprint and is the planning reference
+        return SPECS.multi;
+    }
+
+    // Approximate field as square: side_m = sqrt(ha × 10000)
+    function fieldSide(areaHa) {
+        return Math.sqrt(areaHa * 10000);
+    }
+
+    function computeAll() {
+        const spec = getActiveSpec();
+        const fp = footprint(spec, state.altitude);
+        const swath = fp.w * (1 - state.lateral / 100);          // distance between lines
+        const shotDist = fp.h * (1 - state.frontal / 100);       // distance between shot triggers
+        const side = fieldSide(state.area);
+        const numLines = Math.ceil(side / swath);
+        const shotsPerLine = Math.ceil(side / shotDist);
+        const numShotPoints = numLines * shotsPerLine;           // shutter triggers
+
+        // Files generated per shot trigger depending on selected camera(s)
+        // Mavic 3M fires both cameras simultaneously when 'both' is selected
+        let filesPerShot, mbPerShot;
+        if (state.camera === 'rgb') {
+            filesPerShot = SPECS.rgb.filesPerShot;                          // 1
+            mbPerShot = SPECS.rgb.filesPerShot * SPECS.rgb.mbPerFile;       // 12 MB
+        } else if (state.camera === 'multi') {
+            filesPerShot = SPECS.multi.filesPerShot;                        // 4
+            mbPerShot = SPECS.multi.filesPerShot * SPECS.multi.mbPerFile;   // 12 MB
+        } else { // both
+            filesPerShot = SPECS.rgb.filesPerShot + SPECS.multi.filesPerShot; // 5
+            mbPerShot = (SPECS.rgb.filesPerShot * SPECS.rgb.mbPerFile)
+                      + (SPECS.multi.filesPerShot * SPECS.multi.mbPerFile);   // 24 MB
+        }
+        const totalFiles = numShotPoints * filesPerShot;
+        const totalMB = numShotPoints * mbPerShot;
+        const totalGB = totalMB / 1024;
+
+        // Flight distance (lines + turns roughly 1.3× factor for accelerations)
+        const totalDistance = numLines * side * 1.30;
+        let timeMin = totalDistance / state.speed / 60;
+
+        // Batteries with safety factor
+        const effectivePerBattery = SPECS.batteryEffectiveMin / SPECS.batterySafetyFactor;
+        const batteries = Math.ceil(timeMin / effectivePerBattery);
+
+        return {
+            gsdRgb: gsd(SPECS.rgb, state.altitude),
+            gsdMulti: gsd(SPECS.multi, state.altitude),
+            footprint: fp,
+            swath, shotDist,
+            numLines, shotsPerLine, numShotPoints,
+            filesPerShot, totalFiles, totalGB,
+            timeMin, batteries
+        };
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  RENDER RESULTS
+    // ─────────────────────────────────────────────────────────────
+    function fmtTime(min) {
+        const h = Math.floor(min / 60);
+        const m = Math.round(min % 60);
+        if (h === 0) return `${m}<span class="unit">min</span>`;
+        return `${h}<span class="unit">h</span> ${m}<span class="unit">min</span>`;
+    }
+    function fmtNum(n) {
+        return n.toLocaleString('es-AR');
+    }
+
+    function render() {
+        const r = computeAll();
+        const mode = MODES.find(m => m.id === state.modeId);
+
+        // GEOMETRY
+        let gsdMain, gsdSec;
+        if (state.camera === 'rgb') {
+            gsdMain = `${r.gsdRgb.toFixed(2)}<span class="unit">cm/px</span>`;
+            gsdSec = `Cámara RGB · 20 MP`;
+        } else if (state.camera === 'multi') {
+            gsdMain = `${r.gsdMulti.toFixed(2)}<span class="unit">cm/px</span>`;
+            gsdSec = `Cámara multiespectral · 5 MP`;
+        } else {
+            gsdMain = `${r.gsdRgb.toFixed(2)} <span class="unit">/ ${r.gsdMulti.toFixed(2)} cm/px</span>`;
+            gsdSec = `RGB · Multi`;
+        }
+        document.getElementById('gsd-main').innerHTML = gsdMain;
+        document.getElementById('gsd-secondary').textContent = gsdSec;
+        document.getElementById('footprint').innerHTML =
+            `${r.footprint.w.toFixed(0)} × ${r.footprint.h.toFixed(0)}<span class="unit">m</span>`;
+        document.getElementById('line-spacing').innerHTML =
+            `${r.swath.toFixed(1)}<span class="unit">m</span>`;
+        document.getElementById('shot-spacing').textContent =
+            `Disparos cada ${r.shotDist.toFixed(1)} m`;
+
+        // LOGISTICS
+        document.getElementById('flight-time').innerHTML = fmtTime(r.timeMin);
+        document.getElementById('batteries').innerHTML =
+            `${r.batteries}<span class="unit">${r.batteries === 1 ? 'batería' : 'baterías'}</span>`;
+        document.getElementById('num-images').innerHTML =
+            `${fmtNum(r.totalFiles)}<span class="unit">archivos</span>`;
+        const shotsLabel = `${fmtNum(r.numShotPoints)} disparos × ${r.filesPerShot} ${r.filesPerShot === 1 ? 'archivo' : 'archivos'} · ≈ ${r.totalGB.toFixed(1)} GB`;
+        document.getElementById('storage').textContent = shotsLabel;
+
+        // PRICE
+        renderPrice(mode, r);
+    }
+
+    function renderPrice(mode, r) {
+        const container = document.getElementById('price-content');
+
+        // Custom mode → always personalized
+        if (mode.custom) {
+            container.innerHTML = `
+                <div class="price-custom">
+                    <h3>Cotización a medida</h3>
+                    <p>Los vuelos personalizados se cotizan según los entregables y la complejidad del trabajo.</p>
+                    <a id="custom-quote-btn" href="#" target="_blank" class="btn btn-light">
+                        <i class="fab fa-whatsapp"></i> Solicitar cotización
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        // Build deliverables list
+        const deliverablesHtml = `
+            <div class="deliverables-list">
+                ${mode.deliverables.map(d =>
+                    `<div class="deliverable-item"><i class="fas fa-check"></i> ${d}</div>`
+                ).join('')}
+            </div>
+        `;
+
+        if (state.whoFlies === 'client') {
+            // Client flies → modality price applies
+            const total = state.area * mode.priceClient;
+            container.innerHTML = `
+                ${deliverablesHtml}
+                <div class="price-breakdown">
+                    <div class="breakdown-row">
+                        <span>Procesamiento ${mode.title.toLowerCase()}</span>
+                        <span class="br-amount">USD ${mode.priceClient}/ha</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>Superficie</span>
+                        <span class="br-amount">${state.area} ha</span>
+                    </div>
+                </div>
+                <div class="price-total">
+                    <div class="price-total-label">
+                        <span>Total estimado</span>
+                        <span style="color: var(--green-light);">solo procesamiento</span>
+                    </div>
+                    <div class="price-total-amount">
+                        <span class="currency">USD</span>${fmtNum(Math.round(total))}
+                        <span class="perha">${mode.priceClient}/ha</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            // PrecisionField flies → flat 6.5/ha with min 50 ha
+            const billedArea = Math.max(state.area, FULL_SERVICE_MIN_HA);
+            const total = billedArea * PRICE_FULL_SERVICE;
+            const showWarning = state.area < FULL_SERVICE_MIN_HA;
+            container.innerHTML = `
+                ${deliverablesHtml}
+                <div class="price-breakdown">
+                    <div class="breakdown-row">
+                        <span>Servicio integral (vuelo + procesamiento)</span>
+                        <span class="br-amount">USD ${PRICE_FULL_SERVICE}/ha</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>${showWarning ? 'Superficie facturable (mínimo)' : 'Superficie'}</span>
+                        <span class="br-amount">${billedArea} ha</span>
+                    </div>
+                </div>
+                <div class="price-total">
+                    <div class="price-total-label">
+                        <span>Total estimado</span>
+                        <span style="color: var(--green-light);">vuelo + procesamiento</span>
+                    </div>
+                    <div class="price-total-amount">
+                        <span class="currency">USD</span>${fmtNum(Math.round(total))}
+                        <span class="perha">${PRICE_FULL_SERVICE}/ha</span>
+                    </div>
+                    ${showWarning ? `
+                        <div class="price-warning">
+                            <i class="fas fa-circle-info"></i>
+                            El servicio integral tiene un mínimo de ${FULL_SERVICE_MIN_HA} ha. Para superficies menores se factura como ${FULL_SERVICE_MIN_HA} ha.
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+    }
+
+    function compute() {
+        render();
+        updateCTAs();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  CONSULT MESSAGE BUILDER (pre-fills WhatsApp + email)
+    // ─────────────────────────────────────────────────────────────
+    const WHATSAPP_NUMBER = '5491154251823';
+    // Email assembled at runtime to dodge basic spam crawlers
+    const EMAIL_ADDRESS = 'precisionfieldar' + '@' + 'gmail.com';
+
+    const CAMERA_NAMES = {
+        rgb: 'RGB (20 MP)',
+        multi: 'Multispectral (4 bandas)',
+        both: 'RGB + Multispectral'
+    };
+    const WHO_NAMES = {
+        client: 'Tengo mi propio Mavic 3M (solo procesamiento)',
+        precisionfield: 'Servicio integral · vuelo + procesamiento'
+    };
+
+    function fmtTimePlain(min) {
+        const h = Math.floor(min / 60);
+        const m = Math.round(min % 60);
+        if (h === 0) return `${m} min`;
+        return `${h}h ${m}min`;
+    }
+
+    function buildConsultMessage() {
+        const r = computeAll();
+        const mode = MODES.find(m => m.id === state.modeId);
+
+        // Build price line based on mode + who flies
+        let priceLine;
+        if (mode.custom) {
+            priceLine = 'Cotización: a definir según objetivo del vuelo';
+        } else if (state.whoFlies === 'client') {
+            const total = state.area * mode.priceClient;
+            priceLine = `Cotización estimada: USD ${Math.round(total)} (USD ${mode.priceClient}/ha · solo procesamiento)`;
+        } else {
+            const billedArea = Math.max(state.area, FULL_SERVICE_MIN_HA);
+            const total = billedArea * PRICE_FULL_SERVICE;
+            const minNote = state.area < FULL_SERVICE_MIN_HA ? ` (facturable como ${FULL_SERVICE_MIN_HA} ha · mínimo)` : '';
+            priceLine = `Cotización estimada: USD ${Math.round(total)} (USD ${PRICE_FULL_SERVICE}/ha · vuelo + procesamiento${minNote})`;
+        }
+
+        const lines = [
+            'Hola! Quisiera consultar por un servicio de PrecisionField.',
+            '',
+            `SERVICIO: ${mode.title}`,
+            `Modalidad: ${WHO_NAMES[state.whoFlies]}`,
+            '',
+            'PARÁMETROS DEL VUELO',
+            `- Superficie: ${state.area} ha`,
+            `- Altura de vuelo: ${state.altitude} m`,
+            `- Solapamiento frontal: ${state.frontal}%`,
+            `- Solapamiento lateral: ${state.lateral}%`,
+            `- Velocidad: ${state.speed} m/s`,
+            `- Cámara: ${CAMERA_NAMES[state.camera]}`,
+            '',
+            'ESTIMACIÓN DEL VUELO',
+            `- Tiempo total: ${fmtTimePlain(r.timeMin)}`,
+            `- Baterías necesarias: ${r.batteries}`,
+            `- Archivos a capturar: ${r.totalFiles.toLocaleString('es-AR')}`,
+            `- Almacenamiento: ${r.totalGB.toFixed(1)} GB`,
+            '',
+            priceLine,
+            '',
+            '¿Podemos coordinar?'
+        ];
+        return lines.join('\n');
+    }
+
+    function updateCTAs() {
+        const mode = MODES.find(m => m.id === state.modeId);
+        const message = buildConsultMessage();
+        const subject = `Consulta · ${mode.title} · ${state.area} ha`;
+
+        // Main CTA buttons (bottom of page)
+        const wa = document.getElementById('cta-whatsapp');
+        const em = document.getElementById('cta-email');
+        if (wa) wa.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        if (em) em.href = `mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+
+        // Custom-mode button inside the price card (if rendered)
+        const customBtn = document.getElementById('custom-quote-btn');
+        if (customBtn) {
+            customBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  EVENT LISTENERS
+    // ─────────────────────────────────────────────────────────────
+    document.getElementById('area-input').addEventListener('input', e => {
+        const v = parseInt(e.target.value);
+        if (isNaN(v) || v < 1) return;
+        state.area = v;
+        updateLabels();
+        compute();
+    });
+
+    function bindSlider(id, key, suffix) {
+        document.getElementById(id).addEventListener('input', e => {
+            state[key] = parseInt(e.target.value);
+            updateLabels();
+            compute();
+        });
+    }
+    bindSlider('altitude-slider', 'altitude');
+    bindSlider('frontal-slider', 'frontal');
+    bindSlider('lateral-slider', 'lateral');
+    bindSlider('speed-slider', 'speed');
+
+    document.getElementById('camera-toggle').addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        document.querySelectorAll('#camera-toggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.camera = btn.dataset.cam;
+        compute();
+    });
+
+    document.querySelectorAll('.who-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.who-option').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            state.whoFlies = opt.dataset.who;
+            compute();
+        });
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    //  INIT
+    // ─────────────────────────────────────────────────────────────
+    renderModes();
+    selectMode('ambientes');
+    </script>
+</body>
+</html>

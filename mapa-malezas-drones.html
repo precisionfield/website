@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de malezas con drones · Zona núcleo | PrecisionField</title>
+    <meta name="description" content="Herramienta interactiva para mapear y manejar malezas con dron en zona núcleo de Argentina. Catálogo REM 2025, calendario de mapeo por cultivo y calculadora de ahorro por aplicación sitio-específica.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-deep:    #1a3a2a;
+            --green-mid:     #2d5a40;
+            --green-soft:    #4a7c59;
+            --green-light:   #7eb897;
+            --green-pale:    #e8f2ec;
+            --earth-dark:    #5c3d1e;
+            --earth-mid:     #b8702b;
+            --earth-light:   #d4956a;
+            --earth-pale:    #faf3ec;
+            --cream:         #f7f4ef;
+            --white:         #ffffff;
+            --text-dark:     #1c2820;
+            --text-mid:      #3d5248;
+            --text-light:    #6b8878;
+            --border:        #d4e2da;
+            --danger:        #c0392b;
+            --warn:          #d4a017;
+            --shadow-sm:     0 2px 12px rgba(26,58,42,0.08);
+            --shadow-md:     0 8px 32px rgba(26,58,42,0.12);
+            --shadow-lg:     0 20px 60px rgba(26,58,42,0.16);
+            --radius-sm:     6px;
+            --radius-md:     12px;
+            --radius-lg:     20px;
+            --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        ul { list-style: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+        a { color: inherit; text-decoration: none; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            line-height: 1.2;
+            color: var(--green-deep);
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--earth-mid);
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── HEADER / LOGO ── */
+        .tool-header {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            padding: 1.5rem 2rem;
+        }
+        .tool-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .tool-logo {
+            height: 52px;
+            width: auto;
+            display: block;
+        }
+        .header-back {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+        .header-back:hover { color: var(--white); }
+
+        /* ── HERO ── */
+        .tool-hero {
+            background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-hero::before {
+            content: '';
+            position: absolute;
+            top: -120px; right: -120px;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: rgba(126,184,151,0.08);
+            pointer-events: none;
+        }
+        .tool-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(184,112,43,0.06);
+            pointer-events: none;
+        }
+        .tool-hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .tool-hero .eyebrow { color: var(--green-light); }
+        .tool-hero h1 {
+            font-size: clamp(2rem, 4.5vw, 3.4rem);
+            color: var(--white);
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+        .tool-hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.78);
+            max-width: 640px;
+        }
+        .scope-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.4rem 0.9rem;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 999px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.85);
+        }
+        .scope-badge i { color: var(--green-light); }
+
+        /* ── CONTEXT BAR (3 stats) ── */
+        .context-bar {
+            background: var(--white);
+            padding: 3rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .context-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .ctx-stat {
+            text-align: center;
+            padding: 0 1rem;
+            border-right: 1px dashed var(--border);
+        }
+        .ctx-stat:last-child { border-right: none; }
+        .ctx-stat-num {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            color: var(--green-deep);
+            line-height: 1.1;
+            margin-bottom: 0.4rem;
+        }
+        .ctx-stat-num small {
+            font-size: 0.55em;
+            color: var(--earth-mid);
+            font-weight: 400;
+            margin-left: 0.2rem;
+        }
+        .ctx-stat-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-light);
+        }
+        .ctx-stat-sub {
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            margin-top: 0.3rem;
+            line-height: 1.4;
+        }
+
+        /* ── CONTROLS ── */
+        .controls-section {
+            background: rgba(247,244,239,0.95);
+            padding: 3rem 2rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+        .controls-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .mode-toggle {
+            display: inline-flex;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 4px;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            flex-wrap: wrap;
+        }
+        .mode-toggle button {
+            padding: 0.6rem 1.4rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            border-radius: 999px;
+            color: var(--text-mid);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .mode-toggle button.active {
+            background: var(--green-mid);
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(45,90,64,0.3);
+        }
+        .mode-toggle button i { font-size: 0.85rem; }
+
+        .filters {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-light);
+            min-width: 80px;
+        }
+        .chips {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .chip {
+            padding: 0.35rem 0.85rem;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text-mid);
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .chip:hover { border-color: var(--green-soft); color: var(--green-deep); }
+        .chip.active {
+            background: var(--green-deep);
+            color: var(--white);
+            border-color: var(--green-deep);
+        }
+        .chip.earth-accent.active {
+            background: var(--earth-mid);
+            border-color: var(--earth-mid);
+        }
+
+        /* ── RESULTS / WEED CARDS ── */
+        .results-section { padding: 2.5rem 2rem 4rem; }
+        .results-inner { max-width: 1100px; margin: 0 auto; }
+        .results-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .weed-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .weed-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--earth-mid);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition);
+        }
+        .weed-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--green-light);
+        }
+        .weed-card:hover::before { transform: scaleX(1); }
+        .weed-card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+        .weed-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--green-deep);
+            line-height: 1.2;
+        }
+        .weed-common {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-top: 0.2rem;
+        }
+        .weed-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-light);
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+        .cycle-tag {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            font-family: 'Space Mono', monospace;
+            white-space: nowrap;
+        }
+        .cycle-tag.oi {
+            background: rgba(46,125,50,0.12);
+            color: var(--green-mid);
+        }
+        .cycle-tag.pe {
+            background: rgba(184,112,43,0.12);
+            color: var(--earth-mid);
+        }
+
+        .resistance-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .resistance-pill {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 0.18rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(192,57,43,0.08);
+            color: var(--danger);
+            border: 1px solid rgba(192,57,43,0.18);
+            letter-spacing: 0.04em;
+        }
+        .resistance-pill.none {
+            background: var(--green-pale);
+            color: var(--green-mid);
+            border-color: rgba(46,125,50,0.18);
+        }
+
+        .detection-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.78rem;
+            color: var(--text-light);
+        }
+        .detection-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .det-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .det-alta .det-dot { background: #2e7d32; }
+        .det-alta { color: #2e7d32; }
+        .det-media .det-dot { background: var(--warn); }
+        .det-media { color: #a07810; }
+        .det-baja .det-dot { background: var(--danger); }
+        .det-baja { color: var(--danger); }
+        .more-link {
+            color: var(--earth-mid);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.78rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            color: var(--green-light);
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        /* ── TIMELINE SECTION ── */
+        .timeline-section {
+            background: var(--green-deep);
+            padding: 5rem 2rem;
+            color: var(--white);
+        }
+        .timeline-inner { max-width: 1100px; margin: 0 auto; }
+        .timeline-section .eyebrow { color: var(--green-light); }
+        .timeline-section h2 {
+            color: var(--white);
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            margin-bottom: 1rem;
+        }
+        .timeline-section > .timeline-inner > p {
+            color: rgba(255,255,255,0.65);
+            margin-bottom: 2rem;
+            max-width: 680px;
+        }
+
+        .timeline-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.72rem;
+            font-family: 'Space Mono', monospace;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.05em;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .legend-swatch {
+            width: 18px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .timeline-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem;
+        }
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 130px repeat(12, minmax(48px, 1fr));
+            gap: 4px;
+            min-width: 760px;
+        }
+        .tl-month-head {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--green-light);
+            text-align: center;
+            padding: 0.5rem 0.2rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .tl-crop-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.4rem;
+            font-size: 0.85rem;
+            color: var(--white);
+            font-weight: 500;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        .tl-crop-label i {
+            color: var(--green-light);
+            font-size: 0.85rem;
+        }
+        .tl-cell {
+            background: rgba(255,255,255,0.03);
+            border-radius: 4px;
+            min-height: 38px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .tl-cell:hover {
+            transform: scale(1.08);
+            z-index: 5;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+        }
+        .tl-cell.barbecho-largo { background: var(--green-soft); }
+        .tl-cell.barbecho-corto { background: var(--green-mid); }
+        .tl-cell.pre-emergencia { background: var(--green-light); }
+        .tl-cell.post-emergencia { background: var(--earth-light); }
+        .tl-cell.escapes { background: var(--earth-mid); }
+
+        .tl-tooltip {
+            background: var(--cream);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            margin-top: 1.2rem;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+            display: none;
+            border-left: 3px solid var(--earth-mid);
+        }
+        .tl-tooltip.active { display: block; }
+        .tl-tooltip strong { color: var(--green-deep); }
+        .tl-tooltip-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            color: var(--earth-mid);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+        .tl-tooltip-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .tl-tag {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.72rem;
+            color: var(--text-mid);
+        }
+
+        /* ── CALCULATOR SECTION ── */
+        .calc-section {
+            background: var(--white);
+            padding: 5rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .calc-inner { max-width: 1100px; margin: 0 auto; }
+        .calc-section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            margin-bottom: 1rem;
+        }
+        .calc-section > .calc-inner > p {
+            color: var(--text-mid);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            background: var(--cream);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+        }
+        .calc-inputs h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--earth-mid);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        .calc-radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .calc-radio {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .calc-radio:hover { border-color: var(--green-soft); }
+        .calc-radio input { margin-top: 0.25rem; }
+        .calc-radio.checked {
+            border-color: var(--green-deep);
+            background: var(--green-pale);
+        }
+        .calc-radio strong {
+            display: block;
+            color: var(--green-deep);
+            font-size: 0.92rem;
+            margin-bottom: 0.15rem;
+        }
+        .calc-radio span {
+            font-size: 0.78rem;
+            color: var(--text-mid);
+        }
+        .calc-radio .price {
+            font-family: 'Space Mono', monospace;
+            color: var(--earth-mid);
+            font-weight: 700;
+        }
+
+        .calc-input-group { margin-bottom: 1.4rem; }
+        .calc-input-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            margin-bottom: 0.4rem;
+        }
+        .calc-input-group .val {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            color: var(--green-deep);
+            font-size: 0.95rem;
+        }
+        .calc-input-group input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        .calc-input-group input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+        }
+        .calc-input-group input[type="range"]::-moz-range-track {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+        }
+        .calc-input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--green-deep);
+            border-radius: 50%;
+            margin-top: -6px;
+            border: 2px solid var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        .calc-input-group input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--green-deep);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        .calc-input-group input[type="number"] {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            background: var(--white);
+        }
+        .calc-input-group input[type="number"]:focus {
+            outline: none;
+            border-color: var(--green-soft);
+            box-shadow: 0 0 0 3px rgba(74,124,89,0.15);
+        }
+
+        .calc-outputs {
+            background: var(--green-deep);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        .calc-outputs::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: rgba(126,184,151,0.08);
+        }
+        .calc-outputs h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--green-light);
+            margin-bottom: 1.8rem;
+            font-weight: 700;
+            position: relative;
+        }
+        .out-main {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .out-main-num {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .out-main-num small {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.45em;
+            color: var(--green-light);
+            margin-left: 0.4rem;
+            font-weight: 400;
+        }
+        .out-main-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            margin-top: 0.3rem;
+        }
+        .out-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .out-cell {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+            padding: 0.9rem 1rem;
+        }
+        .out-cell-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.1;
+        }
+        .out-cell-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.55);
+            margin-top: 0.3rem;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+        .out-warn {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            background: rgba(212,160,23,0.15);
+            border-left: 3px solid var(--warn);
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.5;
+            position: relative;
+        }
+        .out-warn.active { display: block; }
+
+        .calc-disclaimer {
+            margin-top: 1.5rem;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            font-style: italic;
+            line-height: 1.6;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border);
+        }
+
+        /* ── REFERENCES ── */
+        .references-section {
+            background: var(--white);
+            padding: 5rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .references-inner { max-width: 1100px; margin: 0 auto; }
+        .references-section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            margin-bottom: 1rem;
+        }
+        .references-section > .references-inner > p {
+            color: var(--text-mid);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+        }
+        .ref-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .ref-item {
+            font-size: 0.88rem;
+            color: var(--text-mid);
+            padding-left: 1.2rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        .ref-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 6px;
+            height: 6px;
+            background: var(--earth-mid);
+            border-radius: 50%;
+        }
+        .ref-item strong {
+            color: var(--green-deep);
+            font-weight: 600;
+        }
+        .ref-item em {
+            color: var(--text-dark);
+            font-style: italic;
+        }
+        .ref-tag {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            background: var(--green-pale);
+            color: var(--green-deep);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            margin-right: 0.4rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            vertical-align: middle;
+        }
+
+        /* ── MODAL ── */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(26,40,32,0.55);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .modal-backdrop.open {
+            display: flex;
+            opacity: 1;
+        }
+        .modal {
+            background: var(--cream);
+            border-radius: var(--radius-lg);
+            max-width: 760px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-backdrop.open .modal { transform: translateY(0); }
+        .modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 10;
+        }
+        .modal-close:hover {
+            background: var(--green-deep);
+            color: var(--white);
+            border-color: var(--green-deep);
+            transform: rotate(90deg);
+        }
+        .modal-header {
+            padding: 2.5rem 2.5rem 1.5rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        .modal-header .eyebrow { margin-bottom: 0.4rem; }
+        .modal-header h2 {
+            font-style: italic;
+            font-size: 2rem;
+            margin-bottom: 0.3rem;
+        }
+        .modal-header .modal-common {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .modal-header .modal-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-light);
+            letter-spacing: 0.05em;
+        }
+        .modal-body { padding: 2rem 2.5rem 2.5rem; }
+        .modal-section { margin-bottom: 2rem; }
+        .modal-section:last-child { margin-bottom: 0; }
+        .modal-section h4 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--earth-mid);
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+        .modal-section p {
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            line-height: 1.7;
+        }
+        .modal-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .modal-block {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem;
+            border-left: 3px solid var(--green-soft);
+        }
+        .modal-block.det-alta { border-left-color: #2e7d32; }
+        .modal-block.det-media { border-left-color: var(--warn); }
+        .modal-block.det-baja { border-left-color: var(--danger); }
+        .modal-block h5 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--green-deep);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .modal-block p {
+            font-size: 0.85rem;
+            line-height: 1.55;
+        }
+
+        .strategy-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .strategy-item {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            border-left: 3px solid var(--earth-mid);
+        }
+        .strategy-item-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--earth-mid);
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+        .strategy-actives {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+        .active-pill {
+            background: var(--green-pale);
+            color: var(--green-deep);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .germ-strip {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 3px;
+            margin-top: 0.5rem;
+        }
+        .germ-cell {
+            height: 28px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-light);
+        }
+        .germ-cell.active {
+            background: var(--green-soft);
+            color: var(--white);
+            border-color: var(--green-soft);
+            font-weight: 700;
+        }
+
+        .modal-source {
+            background: var(--white);
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--green-soft);
+            font-size: 0.83rem;
+            color: var(--text-mid);
+            line-height: 1.6;
+        }
+        .modal-source strong { color: var(--green-deep); }
+
+        .index-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+            font-size: 0.82rem;
+            color: var(--earth-mid);
+            font-weight: 500;
+        }
+        .index-link:hover { color: var(--earth-dark); text-decoration: underline; }
+
+        /* ── CTA ── */
+        .cta-section {
+            background: linear-gradient(135deg, var(--earth-pale) 0%, var(--cream) 100%);
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        .cta-inner { max-width: 700px; margin: 0 auto; }
+        .cta-section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            font-size: 1.05rem;
+            color: var(--text-mid);
+            margin-bottom: 2rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 1.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-primary { background: var(--green-deep); color: var(--white); }
+        .btn-primary:hover {
+            background: var(--green-mid);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--green-deep);
+            border: 2px solid var(--green-deep);
+        }
+        .btn-outline:hover { background: var(--green-deep); color: var(--white); }
+
+        /* ── FOOTER ── */
+        .tool-footer {
+            background: var(--green-deep);
+            padding: 2.5rem 2rem;
+        }
+        .tool-footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .footer-logo { height: 40px; width: auto; opacity: 0.85; }
+        .tool-footer p {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.05em;
+            line-height: 1.6;
+        }
+        .tool-footer a { color: var(--green-light); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .tool-header { padding: 1rem 1.25rem; }
+            .tool-logo { height: 42px; }
+            .tool-hero { padding: 6rem 1.25rem 3rem; }
+            .context-bar, .controls-section, .results-section,
+            .timeline-section, .calc-section, .references-section, .cta-section {
+                padding-left: 1.25rem; padding-right: 1.25rem;
+            }
+            .controls-section { position: static; padding-top: 2rem; }
+            .context-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+            .ctx-stat { border-right: none; border-bottom: 1px dashed var(--border); padding-bottom: 1.5rem; }
+            .ctx-stat:last-child { border-bottom: none; padding-bottom: 0; }
+            .filter-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .filter-label { min-width: auto; }
+            .calc-grid { grid-template-columns: 1fr; padding: 1.5rem; gap: 1.5rem; }
+            .modal-row { grid-template-columns: 1fr; }
+            .modal-header { padding: 2rem 1.5rem 1.2rem; }
+            .modal-body { padding: 1.5rem; }
+            .modal-header h2 { font-size: 1.5rem; }
+            .tool-footer-inner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER + LOGO -->
+    <header class="tool-header">
+        <div class="tool-header-inner">
+            <a href="index.html"><img src="assets/images/logo.png" alt="PrecisionField" class="tool-logo"></a>
+            <a href="index.html" class="header-back">
+                <i class="fas fa-arrow-left"></i> Volver al sitio
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="tool-hero">
+        <div class="tool-hero-inner">
+            <span class="eyebrow">Herramienta interactiva</span>
+            <h1>Mapa de malezas con dron</h1>
+            <p>Catálogo de malezas resistentes y tolerantes de zona núcleo, calendario de mapeo por cultivo y calculadora de ahorro por aplicación sitio-específica.</p>
+            <span class="scope-badge">
+                <i class="fas fa-map-marker-alt"></i>
+                Zona núcleo · Buenos Aires · Santa Fe · Córdoba
+            </span>
+        </div>
+    </section>
+
+    <!-- CONTEXT STATS -->
+    <section class="context-bar">
+        <div class="context-inner">
+            <div class="ctx-stat">
+                <div class="ctx-stat-num">25,8<small>M ha</small></div>
+                <div class="ctx-stat-label">Superficie con resistencias</div>
+                <div class="ctx-stat-sub">Hectáreas relevadas en Argentina con al menos una especie resistente o tolerante</div>
+            </div>
+            <div class="ctx-stat">
+                <div class="ctx-stat-num">34<small>especies</small></div>
+                <div class="ctx-stat-label">Mapa REM 2025</div>
+                <div class="ctx-stat-sub">28 resistentes y 6 tolerantes — incluye Bassia scoparia y Sonchus oleraceus por primera vez</div>
+            </div>
+            <div class="ctx-stat">
+                <div class="ctx-stat-num">+30<small>%</small></div>
+                <div class="ctx-stat-label">Lotes con resistencias</div>
+                <div class="ctx-stat-sub">Proporción de lotes monitoreados por INTA con al menos una especie resistente</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTROLS -->
+    <div class="controls-section">
+        <div class="controls-inner">
+            <div class="mode-toggle" role="tablist">
+                <button class="active" data-mode="all"><i class="fas fa-th"></i> Catálogo completo</button>
+                <button data-mode="resistant"><i class="fas fa-shield-virus"></i> Solo resistentes</button>
+            </div>
+            <div class="filters">
+                <div class="filter-row">
+                    <span class="filter-label">Cultivo</span>
+                    <div class="chips" id="crop-chips">
+                        <button class="chip active" data-crop="all">Todos</button>
+                        <button class="chip" data-crop="soja">Soja</button>
+                        <button class="chip" data-crop="maiz">Maíz</button>
+                        <button class="chip" data-crop="trigo">Trigo</button>
+                        <button class="chip" data-crop="girasol">Girasol</button>
+                        <button class="chip" data-crop="sorgo">Sorgo</button>
+                        <button class="chip" data-crop="cebada">Cebada</button>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">Momento</span>
+                    <div class="chips" id="moment-chips">
+                        <button class="chip earth-accent active" data-moment="all">Todos</button>
+                        <button class="chip earth-accent" data-moment="barbecho-largo">Barbecho largo</button>
+                        <button class="chip earth-accent" data-moment="barbecho-corto">Barbecho corto</button>
+                        <button class="chip earth-accent" data-moment="pre-emergencia">Pre-emergencia</button>
+                        <button class="chip earth-accent" data-moment="post-emergencia">Post-emergencia</button>
+                        <button class="chip earth-accent" data-moment="escapes">Escapes pre-cosecha</button>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">Ciclo</span>
+                    <div class="chips" id="cycle-chips">
+                        <button class="chip active" data-cycle="all">Todos</button>
+                        <button class="chip" data-cycle="oi">Otoño-invernal</button>
+                        <button class="chip" data-cycle="pe">Primavero-estival</button>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">Tipo</span>
+                    <div class="chips" id="type-chips">
+                        <button class="chip active" data-type="all">Todos</button>
+                        <button class="chip" data-type="dicot">Dicotiledóneas</button>
+                        <button class="chip" data-type="monocot">Monocotiledóneas</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <section class="results-section">
+        <div class="results-inner">
+            <div class="results-meta" id="results-meta">18 especies en el catálogo</div>
+            <div class="card-grid" id="card-grid"></div>
+        </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section class="timeline-section">
+        <div class="timeline-inner">
+            <span class="eyebrow">Calendario de mapeo</span>
+            <h2>Cuándo conviene volar el lote</h2>
+            <p>Ventanas de mapeo de malezas a lo largo del año según el cultivo siguiente, con principios activos típicos por momento e índice espectral sugerido para el Mavic 3M. Hacé click en cualquier celda para ver el detalle.</p>
+
+            <div class="timeline-legend">
+                <span class="legend-item"><span class="legend-swatch" style="background: var(--green-soft);"></span>Barbecho largo</span>
+                <span class="legend-item"><span class="legend-swatch" style="background: var(--green-mid);"></span>Barbecho corto</span>
+                <span class="legend-item"><span class="legend-swatch" style="background: var(--green-light);"></span>Pre-siembra / Pre-emergencia</span>
+                <span class="legend-item"><span class="legend-swatch" style="background: var(--earth-light);"></span>Post-emergencia</span>
+                <span class="legend-item"><span class="legend-swatch" style="background: var(--earth-mid);"></span>Escapes pre-cosecha</span>
+            </div>
+
+            <div class="timeline-wrap">
+                <div class="timeline-grid" id="timeline-grid"></div>
+            </div>
+
+            <div class="tl-tooltip" id="tl-tooltip">
+                <div class="tl-tooltip-meta" id="tl-meta">Seleccioná una celda</div>
+                <div id="tl-content"><strong>Hacé click</strong> en una ventana del calendario para ver principios activos sugeridos e índice espectral del Mavic 3M para esa etapa.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CALCULATOR -->
+    <section class="calc-section">
+        <div class="calc-inner">
+            <span class="eyebrow">Calculadora de ahorro</span>
+            <h2>¿Cuánto ahorrás con aplicación sitio-específica?</h2>
+            <p>Compará el costo de aplicar herbicida en todo el lote versus aplicar solamente sobre las zonas con malezas detectadas por el dron. La calculadora usa <strong>tu costo total de aplicación</strong> y los <strong>precios actuales del servicio PrecisionField</strong>.</p>
+
+            <div class="calc-grid">
+                <div class="calc-inputs">
+                    <h3>Servicio PrecisionField</h3>
+                    <div class="calc-radio-group" id="service-group">
+                        <label class="calc-radio checked">
+                            <input type="radio" name="service" value="process" checked>
+                            <div>
+                                <strong>Procesamiento de imágenes</strong>
+                                <span>El cliente vuela y envía imágenes. Mapa de prescripción incluido. <span class="price">USD 2,8/ha</span></span>
+                            </div>
+                        </label>
+                        <label class="calc-radio">
+                            <input type="radio" name="service" value="fly">
+                            <div>
+                                <strong>Vuelo + procesamiento</strong>
+                                <span>PrecisionField vuela, procesa y entrega prescripción. <span class="price">USD 6,5/ha · mínimo 50 ha · consultar ubicación</span></span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <h3 style="margin-top: 0.5rem;">Parámetros del lote</h3>
+
+                    <div class="calc-input-group">
+                        <label>
+                            <span>Superficie del lote</span>
+                            <span class="val"><span id="ha-val">100</span> ha</span>
+                        </label>
+                        <input type="range" id="calc-ha" min="10" max="2000" step="10" value="100">
+                    </div>
+
+                    <div class="calc-input-group">
+                        <label>
+                            <span>Cobertura estimada de malezas</span>
+                            <span class="val"><span id="coverage-val">25</span>%</span>
+                        </label>
+                        <input type="range" id="calc-coverage" min="5" max="90" step="1" value="25">
+                    </div>
+
+                    <div class="calc-input-group">
+                        <label>
+                            <span>Costo total de la aplicación</span>
+                            <span class="val">USD <span id="herb-val">30</span>/ha</span>
+                        </label>
+                        <input type="range" id="calc-herb" min="5" max="120" step="1" value="30">
+                    </div>
+                </div>
+
+                <div class="calc-outputs">
+                    <h3>Resultados estimados</h3>
+                    <div class="out-main">
+                        <div class="out-main-num">USD <span id="out-savings-total">0</span></div>
+                        <div class="out-main-label">Ahorro estimado en el lote</div>
+                    </div>
+                    <div class="out-grid">
+                        <div class="out-cell">
+                            <div class="out-cell-num">USD <span id="out-savings-ha">0</span></div>
+                            <div class="out-cell-label">Ahorro por hectárea</div>
+                        </div>
+                        <div class="out-cell">
+                            <div class="out-cell-num"><span id="out-pct">0</span>%</div>
+                            <div class="out-cell-label">Reducción del costo total</div>
+                        </div>
+                        <div class="out-cell">
+                            <div class="out-cell-num"><span id="out-reduction">0</span>%</div>
+                            <div class="out-cell-label">Reducción de principio activo aplicado</div>
+                        </div>
+                        <div class="out-cell">
+                            <div class="out-cell-num"><span id="out-breakeven">0</span>%</div>
+                            <div class="out-cell-label">Cobertura mínima para que pague</div>
+                        </div>
+                    </div>
+                    <div class="out-warn" id="out-warn">
+                        <i class="fas fa-info-circle"></i>
+                        El servicio "Vuelo + procesamiento" tiene un mínimo de 50 ha. Consultar ubicación.
+                    </div>
+                </div>
+            </div>
+
+            <p class="calc-disclaimer">
+                Esta calculadora es informativa. No propone dosis ni recetas; el cálculo asume que conocés el costo total del tratamiento por hectárea. El ahorro real depende de la distribución espacial de las malezas, la calidad del mapa de prescripción y las condiciones operativas del equipo de aplicación.
+            </p>
+        </div>
+    </section>
+
+    <!-- REFERENCES -->
+    <section class="references-section">
+        <div class="references-inner">
+            <span class="eyebrow">Fuentes</span>
+            <h2>Bibliografía y referencias técnicas</h2>
+            <p>El catálogo, las resistencias documentadas y las estrategias de manejo se construyeron a partir de fuentes técnicas públicas y revisadas. Esta herramienta no reemplaza la receta agronómica.</p>
+
+            <div class="ref-list">
+                <div class="ref-item">
+                    <span class="ref-tag">REM 2025</span>
+                    Aapresid · Red de Manejo de Plagas (2025). <em>Mapas de Malezas Argentina · 34 especies relevadas (28 resistentes y 6 tolerantes)</em>. Disponible en aapresid.org.ar/rem-malezas
+                </div>
+                <div class="ref-item">
+                    <span class="ref-tag">SUMMIT/UNR</span>
+                    Summit Agro &amp; Universidad Nacional de Rosario. <em>Guía de Malezas · Ciclo otoño-invernal y primavero-estival, dicotiledóneas y monocotiledóneas</em>. Compendio morfológico y de resistencias para identificación a campo.
+                </div>
+                <div class="ref-item">
+                    <span class="ref-tag">CREA</span>
+                    Movimiento CREA Región Sur de Santa Fe (2014). <em>Manual de reconocimiento de malezas de difícil control</em>. Coordinación: Ing. Agr. E. Leguizamón. Plan Regional de Manejo Sustentable.
+                </div>
+                <div class="ref-item">
+                    <span class="ref-tag">ATANOR PRO</span>
+                    Atanor PRO (2025). <em>Nota técnica · Barbecho químico largo: estrategias para un control exitoso</em>. Reseteo + doble golpe + residuales con rotación de modos de acción.
+                </div>
+                <div class="ref-item">
+                    <span class="ref-tag">SENSOR</span>
+                    DJI Enterprise (2023). <em>DJI Mavic 3 Multispectral · User Manual &amp; Technical Specifications</em>. Bandas Green / Red / RedEdge / NIR para teledetección agrícola.
+                </div>
+                <div class="ref-item">
+                    <span class="ref-tag">DISCLAIMER</span>
+                    Esta herramienta presenta principios activos y momentos de aplicación con fines informativos. <strong>Las dosis, la elección final del producto comercial y la aplicación deben ser definidas por un ingeniero agrónomo bajo receta agronómica</strong>, conforme a la normativa de SENASA y la regulación provincial vigente.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <span class="eyebrow">Soluciones PrecisionField</span>
+            <h2>¿Querés un mapa de malezas para tu próximo barbecho?</h2>
+            <p>Procesamos las imágenes de tu dron y entregamos el mapa de prescripción listo para cargar en la pulverizadora. También volamos nosotros si lo preferís.</p>
+            <div class="cta-buttons">
+                <a href="index.html#contact" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Contactanos
+                </a>
+                <a href="https://wa.me/5491154251823" target="_blank" class="btn btn-outline">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="tool-footer">
+        <div class="tool-footer-inner">
+            <img src="assets/images/logo.png" alt="PrecisionField" class="footer-logo">
+            <p>&copy; 2026 <a href="index.html">PrecisionField&reg;</a> · Procesamiento y análisis de imágenes satelitales y de drones para el agro</p>
+        </div>
+    </footer>
+
+    <!-- MODAL -->
+    <div class="modal-backdrop" id="modal-backdrop">
+        <div class="modal" id="modal" role="dialog" aria-modal="true">
+            <button class="modal-close" id="modal-close" aria-label="Cerrar">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header" id="modal-header"></div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // ─────────────────────────────────────────────────────────
+        // DATA — WEEDS
+        // ─────────────────────────────────────────────────────────
+        const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+        const WEEDS = [
+            {
+                id: 'conyza-bonariensis',
+                scientific: 'Conyza bonariensis',
+                common: 'Rama negra',
+                family: 'Asteráceas',
+                type: 'dicot', cycle: 'oi', life: 'Anual',
+                resistances: ['Glifosato','ALS','Glifosato + ALS'],
+                resistance_note: 'Biotipos tolerantes a 2,4-D y a saflufenacil reportados.',
+                description: 'Maleza de mayor distribución en la Argentina, dominante en barbechos de la zona núcleo. Presenta dos picos de germinación: uno fuerte en otoño y otro de menor intensidad en primavera. El control es más efectivo cuando las plantas miden entre 5 y 8 cm de diámetro; pasada esa etapa los mecanismos de supervivencia complican el manejo y aumenta el riesgo de rebrote.',
+                detection: { level: 'alta', text: 'Roseta de gran porte en barbecho otorga alto contraste con suelo desnudo. Detección óptima entre los 5 y 15 cm de diámetro foliar.' },
+                index: 'OSAVI',
+                index_note: 'OSAVI corrige el efecto del suelo en cobertura parcial; NDVI funciona si la cobertura supera el 30%.',
+                germination: [3,4,5,6,9,10],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia'],
+                crops: ['soja','maiz','trigo','girasol','sorgo','cebada'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','2,4-D','Dicamba'] },
+                    { titulo: 'Doble golpe (7-15 días)', principios: ['Glufosinato de amonio','Sulfato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Flumioxazin','Sulfometurón','Metsulfurón','Atrazina'] }
+                ],
+                source: '<strong>Atanor PRO 2025</strong> · Guía de Malezas Summit/UNR · REM Aapresid 2025'
+            },
+            {
+                id: 'conyza-sumatrensis',
+                scientific: 'Conyza sumatrensis',
+                common: 'Rama negra',
+                family: 'Asteráceas',
+                type: 'dicot', cycle: 'oi', life: 'Anual',
+                resistances: ['Glifosato','ALS'],
+                resistance_note: 'Comportamiento similar a C. bonariensis; menor distribución pero en expansión.',
+                description: 'Especie hermana de Conyza bonariensis con dinámica de germinación equivalente. La REM 2025 reporta que Conyza sp. RALS encabeza por segundo año consecutivo el ranking de mayor dispersión territorial entre las resistentes en la Argentina.',
+                detection: { level: 'alta', text: 'Igual que C. bonariensis: roseta visible en barbecho con muy buen contraste con el suelo.' },
+                index: 'OSAVI',
+                index_note: 'OSAVI o NDVI según cobertura; ambos resuelven la roseta característica.',
+                germination: [3,4,5,6,9,10],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia'],
+                crops: ['soja','maiz','trigo','girasol','sorgo','cebada'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','2,4-D','Dicamba'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Flumioxazin','Sulfometurón','Saflufenacil'] }
+                ],
+                source: '<strong>REM Aapresid 2025</strong> · Atanor PRO · Summit/UNR'
+            },
+            {
+                id: 'brassica-rapa',
+                scientific: 'Brassica rapa',
+                common: 'Nabo',
+                family: 'Brasicáceas',
+                type: 'dicot', cycle: 'oi', life: 'Anual',
+                resistances: ['Glifosato','ALS','2,4-D','Flurocloridona','Resistencia múltiple'],
+                resistance_note: 'Mayo 2025: confirmado el primer caso mundial de nabo resistente a cuatro modos de acción (glifosato + ALS + 2,4-D + flurocloridona) en sudeste de Buenos Aires.',
+                description: 'Maleza con pico principal de emergencia en otoño-invierno, pero con nacimientos escalonados que pueden extenderse hasta el verano según humedad. Su rápido crecimiento le permite competir y tolerar herbicidas; debe controlarse antes de los 10 cm de diámetro. Distribución significativa en provincia de Buenos Aires con expansión hacia centro-sur de Córdoba y Santa Fe.',
+                detection: { level: 'alta', text: 'Plantas en roseta de hojas grandes y luego inflorescencia amarilla muy contrastante. Detectable hasta en estadios avanzados.' },
+                index: 'NDVI',
+                index_note: 'NDVI estándar trabaja bien por el alto contraste; OSAVI si la cobertura es menor al 30%.',
+                germination: [3,4,5,6,7,9,10,11],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia'],
+                crops: ['soja','maiz','trigo','girasol','sorgo','cebada'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','2,4-D','Dicamba'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Flumioxazin','Sulfometurón + Metsulfurón'] }
+                ],
+                source: '<strong>REM Aapresid 2025</strong> · Atanor PRO · Reportes 2025 sudeste Bs As'
+            },
+            {
+                id: 'raphanus-sativus',
+                scientific: 'Raphanus sativus',
+                common: 'Nabón / Rabanito silvestre',
+                family: 'Brasicáceas',
+                type: 'dicot', cycle: 'oi', life: 'Anual',
+                resistances: ['ALS'],
+                resistance_note: 'Resistencia a inhibidores de ALS confirmada; manejo similar a Brassica.',
+                description: 'Acompaña a las brassicas en la dinámica de emergencia escalonada otoño-invernal. Crecimiento rápido y porte que compite con cultivos de invierno. Las prácticas de control deben combinar momento, modos de acción y presencia de cobertura del suelo.',
+                detection: { level: 'alta', text: 'Roseta y luego flor amarilla; detectable durante toda la fase vegetativa.' },
+                index: 'NDVI',
+                index_note: 'NDVI/OSAVI funcionan bien; el alto contraste lo hace una maleza muy mapeable con dron.',
+                germination: [3,4,5,6,9,10],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia'],
+                crops: ['soja','maiz','trigo','girasol'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','2,4-D','Dicamba'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Flumioxazin','Sulfometurón'] }
+                ],
+                source: '<strong>REM Aapresid 2025</strong> · Summit/UNR · Atanor PRO'
+            },
+            {
+                id: 'hirschfeldia-incana',
+                scientific: 'Hirschfeldia incana',
+                common: 'Mostacilla',
+                family: 'Brasicáceas',
+                type: 'dicot', cycle: 'oi', life: 'Bianual',
+                resistances: ['Glifosato','ALS (metsulfurón)','2,4-D'],
+                resistance_note: 'Resistencia múltiple confirmada en zona núcleo agrícola.',
+                description: 'Germina en múltiples pulsos influenciados por temperatura, humedad y luz, con mayor probabilidad en otoño y primavera. Se distribuye principalmente en La Pampa, Buenos Aires y sur de Santa Fe, con expansión hacia el sureste de Córdoba. Especie desafiante por el patrón de emergencia escalonado, tanto en cultivos de invierno como de verano.',
+                detection: { level: 'alta', text: 'Roseta característica con buen contraste en barbecho y bordes.' },
+                index: 'OSAVI',
+                index_note: 'OSAVI mejor para detectarla en cobertura baja; clave en barbecho corto.',
+                germination: [3,4,5,9,10,11],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia'],
+                crops: ['soja','maiz','trigo','girasol'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','2,4-D','Dicamba'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Flumioxazin','Sulfometurón'] }
+                ],
+                source: '<strong>Atanor PRO 2025</strong> · Summit/UNR · REM Aapresid'
+            },
+            {
+                id: 'lolium-multiflorum',
+                scientific: 'Lolium multiflorum',
+                common: 'Raigrás anual',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'oi', life: 'Anual',
+                resistances: ['Glifosato','ALS','ACCasa','Resistencia múltiple'],
+                resistance_note: 'Crecimiento sostenido en mapas REM; biotipos con resistencia a hasta tres modos de acción.',
+                description: 'Monocotiledónea de pico principal de germinación en otoño con nacimientos secundarios en primavera. Debe controlarse en estadios iniciales (2 hojas) para evitar escapes. Distribución amplia en zona templada: Buenos Aires, Entre Ríos, Santa Fe, Córdoba y La Pampa.',
+                detection: { level: 'media', text: 'Macollos verdes pueden confundirse con cultivo en pie; mejor detección en barbecho otoñal cuando emerge sobre suelo desnudo.' },
+                index: 'NDVI',
+                index_note: 'NDVI en barbecho; en cultivo establecido cuesta diferenciar — a veces se requiere RGB de alta resolución (ExG/NGRDI) o post-clasificación.',
+                germination: [3,4,5,6,9,10],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia','post-emergencia'],
+                crops: ['soja','maiz','trigo','girasol','cebada'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','Cletodim'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Prometrina','Pirosaxulam','S-metolaclor'] },
+                    { titulo: 'Post-emergencia (graminicidas)', principios: ['Cletodim','Haloxifop','Pinoxaden (en trigo)'] }
+                ],
+                source: '<strong>Atanor PRO 2025</strong> · REM Aapresid · Summit/UNR'
+            },
+            {
+                id: 'lolium-perenne',
+                scientific: 'Lolium perenne',
+                common: 'Raigrás perenne',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'oi', life: 'Perenne',
+                resistances: ['Glifosato'],
+                resistance_note: 'Especie ganando terreno en planteos donde existían pasturas.',
+                description: 'Variante perenne del género Lolium, frecuente en lotes con antecedente de pasturas o donde los raigrases anuales han establecido bancos persistentes. La REM 2025 reporta a Lolium sp. de manera agregada porque hay mezcla de especies.',
+                detection: { level: 'media', text: 'Detectabilidad similar a L. multiflorum: alta en barbecho, complicada en cultivo cerrado.' },
+                index: 'NDVI',
+                index_note: 'NDVI en barbecho; complementar con RGB en cultivo para diferenciar manchones.',
+                germination: [3,4,5,9,10],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia'],
+                crops: ['soja','maiz','trigo'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','Cletodim'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales', principios: ['Prometrina','S-metolaclor'] }
+                ],
+                source: '<strong>REM Aapresid 2025</strong> · Summit/UNR'
+            },
+            {
+                id: 'sonchus-oleraceus',
+                scientific: 'Sonchus oleraceus',
+                common: 'Cerraja',
+                family: 'Asteráceas',
+                type: 'dicot', cycle: 'oi', life: 'Anual',
+                resistances: ['Sin resistencia confirmada'],
+                resistance_note: 'Sin registro de resistencia hasta REM 2025, pero incorporada al mapa por crecimiento sostenido en superficie.',
+                description: 'Maleza incorporada por primera vez al mapeo REM en la edición 2025 por su importancia creciente. Germina principalmente en otoño-invierno con escapes primaverales; predominante en bordes y barbechos no manejados. Su presencia frecuente la hace prioritaria en la planificación del barbecho largo.',
+                detection: { level: 'alta', text: 'Roseta con hojas pinnadas y luego inflorescencia amarilla; muy reconocible incluso desde RGB.' },
+                index: 'NDVI',
+                index_note: 'NDVI/OSAVI funcionan; alternativa con RGB ExG por la coloración verde-amarillenta característica.',
+                germination: [4,5,6,9,10,11],
+                moments: ['barbecho-largo','barbecho-corto','pre-emergencia'],
+                crops: ['soja','maiz','trigo','girasol','sorgo','cebada'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','2,4-D'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Flumioxazin','Sulfometurón'] }
+                ],
+                source: '<strong>REM Aapresid 2025 (nueva incorporación)</strong> · Atanor PRO · Summit/UNR'
+            },
+            {
+                id: 'carduus-acanthoides',
+                scientific: 'Carduus acanthoides',
+                common: 'Cardo',
+                family: 'Asteráceas',
+                type: 'dicot', cycle: 'oi', life: 'Anual',
+                resistances: ['Glifosato','2,4-D'],
+                resistance_note: 'Biotipos resistentes confirmados.',
+                description: 'Germinación principal en primavera, extensible hasta finales del otoño según temperatura del suelo y humedad disponible. Predominio en zona núcleo agrícola con expansión hacia el sureste de Córdoba.',
+                detection: { level: 'alta', text: 'Planta de gran porte con espinas, fácilmente identificable desde el aire incluso en cultivos.' },
+                index: 'NDVI',
+                index_note: 'NDVI en barbecho; en cultivo se identifica como manchones de mayor altura y reflectancia diferencial.',
+                germination: [3,4,9,10,11],
+                moments: ['barbecho-largo','pre-emergencia'],
+                crops: ['soja','maiz','trigo','girasol'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','2,4-D','Dicamba'] },
+                    { titulo: 'Doble golpe', principios: ['Glufosinato de amonio'] },
+                    { titulo: 'Residuales pre-emergencia', principios: ['Flumioxazin'] }
+                ],
+                source: '<strong>Atanor PRO 2025</strong> · Summit/UNR'
+            },
+            {
+                id: 'avena-fatua',
+                scientific: 'Avena fatua',
+                common: 'Avena negra',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'oi', life: 'Anual',
+                resistances: ['ACCasa'],
+                resistance_note: 'Resistencia a inhibidores de ACCasa documentada en regiones trigueras.',
+                description: 'Maleza típica de cereales de invierno con pico de germinación otoñal. Compite fuertemente por nitrógeno con trigo y cebada. Manejo prioritario en barbecho corto previo a siembra de invierno.',
+                detection: { level: 'media', text: 'Difícil de discriminar dentro del cultivo de trigo o cebada; mejor detectarla en barbecho.' },
+                index: 'OSAVI',
+                index_note: 'OSAVI en barbecho corto; en post-emergencia de cereal requiere análisis más fino.',
+                germination: [3,4,5,9,10],
+                moments: ['barbecho-corto','pre-emergencia','post-emergencia'],
+                crops: ['trigo','cebada'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato'] },
+                    { titulo: 'Pre-emergencia', principios: ['Triallate','Flufenacet'] },
+                    { titulo: 'Post-emergencia (cereal)', principios: ['Pinoxaden','Iodosulfurón','Mesosulfurón'] }
+                ],
+                source: '<strong>Summit/UNR</strong> · REM Aapresid'
+            },
+            {
+                id: 'amaranthus-palmeri',
+                scientific: 'Amaranthus palmeri',
+                common: 'Yuyo colorado',
+                family: 'Amarantáceas',
+                type: 'dicot', cycle: 'pe', life: 'Anual',
+                resistances: ['Glifosato','ALS','HPPD','PPO','Resistencia múltiple'],
+                resistance_note: 'La maleza con mayor escalada de resistencias del país; suma costos de control de USD 20-40/ha cuando aparece.',
+                description: 'Una de las dos especies de mayor área afectada en el ranking REM, junto con Conyza. Germinación primavero-estival con múltiples cohortes según humedad y temperatura. Crecimiento muy rápido en condiciones favorables; el control debe ser temprano. Especie dioica con alta producción de semillas.',
+                detection: { level: 'alta', text: 'Crecimiento explosivo y porte que sobresale del cultivo; detectable cuando supera la canopia. Mejor detección entre 10 y 30 cm.' },
+                index: 'NDRE',
+                index_note: 'NDRE detecta diferencias dentro de cultivos densos donde NDVI satura; en barbecho NDVI/OSAVI son suficientes.',
+                germination: [10,11,12,1,2,3],
+                moments: ['pre-siembra','pre-emergencia','post-emergencia','escapes'],
+                crops: ['soja','maiz','sorgo'],
+                strategy: [
+                    { titulo: 'Pre-siembra', principios: ['Glifosato','2,4-D','Saflufenacil'] },
+                    { titulo: 'Pre-emergencia', principios: ['Flumioxazin','Sulfentrazona','S-metolaclor','Acetoclor','Atrazina'] },
+                    { titulo: 'Post-emergencia (soja)', principios: ['Imazetapir','Bentazón','Fomesafen'] },
+                    { titulo: 'Post-emergencia (maíz)', principios: ['Mesotrione','Topramezone','Tembotrione'] }
+                ],
+                source: '<strong>Manual CREA</strong> · REM Aapresid 2025 · Summit/UNR'
+            },
+            {
+                id: 'amaranthus-hybridus',
+                scientific: 'Amaranthus hybridus',
+                common: 'Yuyo colorado / Ataco',
+                family: 'Amarantáceas',
+                type: 'dicot', cycle: 'pe', life: 'Anual',
+                resistances: ['Glifosato','ALS','PPO','Resistencia múltiple'],
+                resistance_note: 'Coexiste con A. palmeri en gran parte de la zona núcleo; se distingue por hoja con manchas y porte más erecto.',
+                description: 'Especie hermana de A. palmeri con dinámica similar pero porte erecto (no arrosetado) y panojas más cortas y compactas. Las plántulas son muy similares y se distinguen recién después del primer o segundo par de hojas.',
+                detection: { level: 'alta', text: 'Detectabilidad muy similar a A. palmeri; identificación a especie requiere validación a campo.' },
+                index: 'NDRE',
+                index_note: 'Igual que A. palmeri: NDRE para escapes en cultivo cerrado, NDVI/OSAVI para barbecho.',
+                germination: [10,11,12,1,2],
+                moments: ['pre-siembra','pre-emergencia','post-emergencia','escapes'],
+                crops: ['soja','maiz','sorgo','girasol'],
+                strategy: [
+                    { titulo: 'Pre-siembra', principios: ['Glifosato','2,4-D','Saflufenacil'] },
+                    { titulo: 'Pre-emergencia', principios: ['Flumioxazin','Sulfentrazona','S-metolaclor','Atrazina'] },
+                    { titulo: 'Post-emergencia', principios: ['Imazetapir','Mesotrione','Bentazón'] }
+                ],
+                source: '<strong>Manual CREA</strong> · Summit/UNR · REM Aapresid'
+            },
+            {
+                id: 'echinochloa-colona',
+                scientific: 'Echinochloa colona',
+                common: 'Capín / Pasto colorado',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'pe', life: 'Anual',
+                resistances: ['Glifosato'],
+                resistance_note: 'Resistencia a glifosato confirmada; figura entre las gramíneas top del ranking REM.',
+                description: 'Gramínea estival con germinación escalonada de octubre a marzo. Coloniza bordes húmedos y zonas con riego. Su control en post-emergencia se complica si supera el estadio de macollaje.',
+                detection: { level: 'alta', text: 'Macollo erecto en barbechos estivales con alto contraste; detectable también como manchones dentro del cultivo.' },
+                index: 'NDVI',
+                index_note: 'NDVI estándar funciona bien; OSAVI ante cobertura parcial.',
+                germination: [10,11,12,1,2,3],
+                moments: ['barbecho-largo','pre-siembra','pre-emergencia','post-emergencia'],
+                crops: ['soja','maiz','sorgo'],
+                strategy: [
+                    { titulo: 'Pre-siembra', principios: ['Glifosato','Glufosinato de amonio'] },
+                    { titulo: 'Pre-emergencia', principios: ['S-metolaclor','Acetoclor','Atrazina'] },
+                    { titulo: 'Post-emergencia', principios: ['Cletodim','Haloxifop','Quizalofop'] }
+                ],
+                source: '<strong>Manual CREA</strong> · REM Aapresid 2025'
+            },
+            {
+                id: 'eleusine-indica',
+                scientific: 'Eleusine indica',
+                common: 'Pata de gallina',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'pe', life: 'Anual',
+                resistances: ['Glifosato'],
+                resistance_note: 'Resistencia a glifosato confirmada; presencia creciente en cultivos estivales.',
+                description: 'Gramínea estival con porte postrado característico (recuerda una pata de gallina). Germinación primaveral-estival con persistencia hasta el otoño. Manejo difícil por su rebrote desde nudos basales.',
+                detection: { level: 'media', text: 'Porte postrado y baja altura limitan la detección; mejor en barbechos sobre suelo desnudo.' },
+                index: 'OSAVI',
+                index_note: 'OSAVI por su porte bajo y la cobertura parcial típica.',
+                germination: [10,11,12,1,2],
+                moments: ['barbecho-largo','pre-siembra','pre-emergencia','post-emergencia'],
+                crops: ['soja','maiz','sorgo'],
+                strategy: [
+                    { titulo: 'Pre-siembra', principios: ['Glifosato','Glufosinato de amonio'] },
+                    { titulo: 'Pre-emergencia', principios: ['S-metolaclor','Acetoclor'] },
+                    { titulo: 'Post-emergencia', principios: ['Cletodim','Haloxifop'] }
+                ],
+                source: '<strong>Manual CREA</strong> · Summit/UNR · REM Aapresid'
+            },
+            {
+                id: 'sorghum-halepense',
+                scientific: 'Sorghum halepense',
+                common: 'Sorgo de Alepo',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'pe', life: 'Perenne',
+                resistances: ['Glifosato','ACCasa','Glifosato + ACCasa'],
+                resistance_note: 'Una de las gramíneas más problemáticas; biotipos con resistencia a dos modos de acción.',
+                description: 'Perenne rizomatosa que rebrota desde rizomas profundos, lo que la hace particularmente difícil de erradicar. Altísima superficie afectada en zona núcleo (millones de hectáreas). El control requiere combinar herbicidas sistémicos con manejo cultural y rotación de modos de acción.',
+                detection: { level: 'alta', text: 'Porte alto y panoja característica fácilmente visible desde el aire; detectable como manchones persistentes campaña tras campaña.' },
+                index: 'NDVI',
+                index_note: 'NDVI/NDRE para mapear los rodales perennes; útil hacer seguimiento multitemporal.',
+                germination: [9,10,11,12,1,2],
+                moments: ['barbecho-largo','pre-siembra','pre-emergencia','post-emergencia','escapes'],
+                crops: ['soja','maiz','sorgo','girasol'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','Imazapir'] },
+                    { titulo: 'Pre-emergencia', principios: ['S-metolaclor'] },
+                    { titulo: 'Post-emergencia (graminicida)', principios: ['Cletodim','Haloxifop','Quizalofop'] }
+                ],
+                source: '<strong>Manual CREA</strong> · Summit/UNR · REM Aapresid 2025'
+            },
+            {
+                id: 'chloris-spp',
+                scientific: 'Chloris spp.',
+                common: 'Chloris / Gramón',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'pe', life: 'Perenne',
+                resistances: ['Tolerancia a glifosato','Tolerancia natural'],
+                resistance_note: 'Grupo tolerante por naturaleza al glifosato; ranking REM lo ubica entre las top con 12-14 M ha.',
+                description: 'Conjunto de especies del género Chloris (C. virgata, C. ciliata, C. polydactyla) con tolerancia natural al glifosato. Crecen en bordes, banquinas y dentro de lotes en zonas no manejadas. Su control requiere graminicidas selectivos y atención temprana antes del macollaje.',
+                detection: { level: 'media', text: 'Inflorescencia en dedos digitados característica; útil para identificación en post-emergencia avanzada.' },
+                index: 'NDVI',
+                index_note: 'NDVI para mapear rodales; mejor confirmación con RGB de alta resolución para identificar la inflorescencia.',
+                germination: [10,11,12,1,2,3],
+                moments: ['pre-siembra','pre-emergencia','post-emergencia','escapes'],
+                crops: ['soja','maiz','sorgo','girasol'],
+                strategy: [
+                    { titulo: 'Pre-siembra', principios: ['Glufosinato de amonio','Paraquat'] },
+                    { titulo: 'Pre-emergencia', principios: ['S-metolaclor','Acetoclor'] },
+                    { titulo: 'Post-emergencia', principios: ['Cletodim','Haloxifop'] }
+                ],
+                source: '<strong>Manual CREA</strong> · REM Aapresid 2025'
+            },
+            {
+                id: 'bassia-scoparia',
+                scientific: 'Bassia scoparia',
+                common: 'Kochia / Morenita',
+                family: 'Amarantáceas',
+                type: 'dicot', cycle: 'pe', life: 'Anual',
+                resistances: ['ALS','ALS + Glifosato'],
+                resistance_note: 'Incorporada por primera vez al mapeo REM 2025 en sus formas RALS y RALS+RG. Avanza desde el sur y el oeste.',
+                description: 'Especie en expansión documentada por primera vez en REM 2025. Maleza primavero-estival anual con alta producción de semillas y porte arbustivo cuando es adulta. Encontrada con resistencias múltiples en regiones de cultivos extensivos del sur y oeste, avanzando hacia la zona núcleo.',
+                detection: { level: 'alta', text: 'Porte arbustivo y crecimiento rápido la hacen muy detectable como manchones contrastantes.' },
+                index: 'NDVI',
+                index_note: 'NDVI estándar; en estadios tempranos OSAVI por cobertura parcial.',
+                germination: [9,10,11,12,1,2],
+                moments: ['barbecho-largo','pre-siembra','pre-emergencia','post-emergencia'],
+                crops: ['soja','maiz','girasol','sorgo'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato','Dicamba','2,4-D'] },
+                    { titulo: 'Pre-emergencia', principios: ['Flumioxazin','Sulfentrazona'] },
+                    { titulo: 'Post-emergencia', principios: ['Dicamba','Bentazón'] }
+                ],
+                source: '<strong>REM Aapresid 2025 (nueva incorporación)</strong> · Summit/UNR'
+            },
+            {
+                id: 'digitaria-insularis',
+                scientific: 'Digitaria insularis',
+                common: 'Pasto cebolla',
+                family: 'Poáceas',
+                type: 'monocot', cycle: 'pe', life: 'Perenne',
+                resistances: ['Glifosato'],
+                resistance_note: 'Resistencia a glifosato documentada; de las gramíneas perennes con expansión más rápida.',
+                description: 'Gramínea perenne con rizomas cortos y bulbos basales que dan el nombre común. Muy resistente al manejo químico convencional; los planteos donde se establece requieren combinar herbicidas y manejo cultural. Crecimiento sostenido en superficie según REM 2025.',
+                detection: { level: 'alta', text: 'Macollo persistente y porte alto; muy mapeable como rodales recurrentes campaña tras campaña.' },
+                index: 'NDVI',
+                index_note: 'Seguimiento multitemporal con NDVI ayuda a identificar zonas con persistencia del banco.',
+                germination: [9,10,11,12,1,2],
+                moments: ['barbecho-largo','pre-siembra','pre-emergencia','post-emergencia','escapes'],
+                crops: ['soja','maiz','sorgo'],
+                strategy: [
+                    { titulo: 'Reseteo de barbecho', principios: ['Glifosato + Cletodim','Glufosinato de amonio'] },
+                    { titulo: 'Pre-emergencia', principios: ['S-metolaclor'] },
+                    { titulo: 'Post-emergencia', principios: ['Cletodim','Haloxifop'] }
+                ],
+                source: '<strong>REM Aapresid 2025</strong> · Summit/UNR · Manual CREA'
+            }
+        ];
+
+        // ─────────────────────────────────────────────────────────
+        // DATA — CROP TIMELINES (12 months × type of mapping window)
+        // ─────────────────────────────────────────────────────────
+        const CROPS = [
+            {
+                id: 'soja', label: 'Soja', icon: 'fa-leaf',
+                siembra: 'Octubre — Noviembre', cosecha: 'Marzo — Mayo',
+                cells: [
+                    { months: [4,5,6,7,8], type: 'barbecho-largo', principios: ['Glifosato','2,4-D','Dicamba','Flumioxazin','Sulfometurón'], indice: 'OSAVI / NDVI', nota: 'Reseteo + doble golpe + residuales con rotación de modos de acción.' },
+                    { months: [9], type: 'pre-emergencia', principios: ['Sulfentrazona','Flumioxazin','S-metolaclor'], indice: 'OSAVI', nota: 'Residuales pre-emergentes ajustados al banco esperado.' },
+                    { months: [10,11], type: 'pre-emergencia', principios: ['Glifosato + 2,4-D','Saflufenacil'], indice: 'OSAVI', nota: 'Limpieza pre-siembra y pre-emergencia.' },
+                    { months: [12,1], type: 'post-emergencia', principios: ['Cletodim','Imazetapir','Bentazón','Fomesafen'], indice: 'NDVI / NDRE', nota: 'Post-emergencia temprana sobre escapes.' },
+                    { months: [2,3], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Mapeo de escapes pre-cosecha para planificar próximo barbecho.' }
+                ]
+            },
+            {
+                id: 'maiz', label: 'Maíz temprano', icon: 'fa-seedling',
+                siembra: 'Septiembre — Octubre', cosecha: 'Febrero — Abril',
+                cells: [
+                    { months: [3,4,5,6,7], type: 'barbecho-largo', principios: ['Glifosato','2,4-D','Dicamba','Atrazina','Flumioxazin'], indice: 'OSAVI / NDVI', nota: 'Barbecho largo con residuales aptos para maíz.' },
+                    { months: [8], type: 'pre-emergencia', principios: ['Atrazina','Acetoclor','S-metolaclor'], indice: 'OSAVI', nota: 'Pre-siembra con residuales clave en maíz.' },
+                    { months: [9,10], type: 'pre-emergencia', principios: ['Acetoclor','Atrazina','Mesotrione'], indice: 'OSAVI / NDVI', nota: 'Cierre de pre-emergencia.' },
+                    { months: [11,12], type: 'post-emergencia', principios: ['Mesotrione','Topramezone','Tembotrione','Dicamba'], indice: 'NDVI / NDRE', nota: 'Post-emergencia selectiva sobre yuyo colorado y gramíneas.' },
+                    { months: [1,2], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Identificación de escapes para revisar estrategia.' }
+                ]
+            },
+            {
+                id: 'maiz-tardio', label: 'Maíz tardío', icon: 'fa-seedling',
+                siembra: 'Noviembre — Diciembre', cosecha: 'Abril — Junio',
+                cells: [
+                    { months: [4,5,6,7,8,9], type: 'barbecho-largo', principios: ['Glifosato','2,4-D','Dicamba','Atrazina','Flumioxazin'], indice: 'OSAVI / NDVI', nota: 'Barbecho largo más extenso por siembra tardía.' },
+                    { months: [10,11], type: 'pre-emergencia', principios: ['Atrazina','Acetoclor','S-metolaclor'], indice: 'OSAVI', nota: 'Pre-siembra con residuales.' },
+                    { months: [12,1], type: 'post-emergencia', principios: ['Mesotrione','Topramezone','Dicamba'], indice: 'NDVI / NDRE', nota: 'Post-emergencia temprana.' },
+                    { months: [2,3], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Escapes pre-cosecha.' }
+                ]
+            },
+            {
+                id: 'trigo', label: 'Trigo', icon: 'fa-wheat-awn',
+                siembra: 'Junio — Julio', cosecha: 'Noviembre — Enero',
+                cells: [
+                    { months: [3,4,5], type: 'barbecho-corto', principios: ['Glifosato','2,4-D','Cletodim','Pirosaxulam'], indice: 'OSAVI', nota: 'Barbecho corto post-cosecha de cultivo estival.' },
+                    { months: [6,7], type: 'pre-emergencia', principios: ['Triallate','Flufenacet','Pirosaxulam'], indice: 'OSAVI', nota: 'Pre-siembra y pre-emergencia con residuales para gramíneas.' },
+                    { months: [8,9], type: 'post-emergencia', principios: ['Pinoxaden','Iodosulfurón','Mesosulfurón','MCPA'], indice: 'NDVI / NDRE', nota: 'Selectivos post-emergencia para gramíneas y dicotiledóneas.' },
+                    { months: [10,11,12], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Detección de escapes para barbecho siguiente.' }
+                ]
+            },
+            {
+                id: 'cebada', label: 'Cebada', icon: 'fa-wheat-awn',
+                siembra: 'Junio — Julio', cosecha: 'Noviembre — Diciembre',
+                cells: [
+                    { months: [3,4,5], type: 'barbecho-corto', principios: ['Glifosato','2,4-D','Cletodim'], indice: 'OSAVI', nota: 'Barbecho corto con énfasis en raigrás.' },
+                    { months: [6,7], type: 'pre-emergencia', principios: ['Triallate','Flufenacet'], indice: 'OSAVI', nota: 'Pre-siembra con residuales.' },
+                    { months: [8,9], type: 'post-emergencia', principios: ['Pinoxaden','Iodosulfurón','MCPA'], indice: 'NDVI / NDRE', nota: 'Selectivos post-emergencia.' },
+                    { months: [10,11], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Escapes pre-cosecha.' }
+                ]
+            },
+            {
+                id: 'girasol', label: 'Girasol', icon: 'fa-sun',
+                siembra: 'Septiembre — Octubre', cosecha: 'Febrero — Marzo',
+                cells: [
+                    { months: [4,5,6,7], type: 'barbecho-largo', principios: ['Glifosato','2,4-D','Dicamba','Flumioxazin'], indice: 'OSAVI / NDVI', nota: 'Barbecho largo con residuales aptos para girasol.' },
+                    { months: [8,9], type: 'pre-emergencia', principios: ['Flumioxazin','S-metolaclor','Sulfentrazona','Acetoclor'], indice: 'OSAVI', nota: 'Pre-siembra y pre-emergencia.' },
+                    { months: [10,11], type: 'post-emergencia', principios: ['Imazetapir (Clearfield)','Tribenurón'], indice: 'NDVI / NDRE', nota: 'Selectivos según tecnología del híbrido.' },
+                    { months: [12,1], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Escapes pre-cosecha.' }
+                ]
+            },
+            {
+                id: 'sorgo', label: 'Sorgo', icon: 'fa-seedling',
+                siembra: 'Octubre — Diciembre', cosecha: 'Marzo — Junio',
+                cells: [
+                    { months: [4,5,6,7,8], type: 'barbecho-largo', principios: ['Glifosato','2,4-D','Atrazina'], indice: 'OSAVI / NDVI', nota: 'Barbecho largo.' },
+                    { months: [9,10], type: 'pre-emergencia', principios: ['Atrazina','S-metolaclor','Acetoclor'], indice: 'OSAVI', nota: 'Pre-siembra y pre-emergencia.' },
+                    { months: [11,12,1], type: 'post-emergencia', principios: ['Atrazina','2,4-D','Bentazón'], indice: 'NDVI / NDRE', nota: 'Post-emergencia.' },
+                    { months: [2,3], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Escapes pre-cosecha.' }
+                ]
+            },
+            {
+                id: 'soja-segunda', label: 'Soja de segunda', icon: 'fa-leaf',
+                siembra: 'Diciembre — Enero (post trigo/cebada)', cosecha: 'Abril — Mayo',
+                cells: [
+                    { months: [11,12], type: 'barbecho-corto', principios: ['Glifosato','2,4-D','Saflufenacil','Cletodim'], indice: 'OSAVI', nota: 'Barbecho corto post-cosecha de cereal de invierno: ventana muy ajustada para resetear y dejar el lote limpio antes de la siembra.' },
+                    { months: [1], type: 'pre-emergencia', principios: ['Sulfentrazona','Flumioxazin','S-metolaclor'], indice: 'OSAVI', nota: 'Residuales pre-emergentes con cuidado de carry-over al cultivo invernal de la próxima campaña.' },
+                    { months: [2,3], type: 'post-emergencia', principios: ['Cletodim','Imazetapir','Bentazón','Fomesafen'], indice: 'NDVI / NDRE', nota: 'Post-emergencia temprana sobre escapes; clave por la presión de gramíneas estivales que vienen del rastrojo.' },
+                    { months: [4], type: 'escapes', principios: ['Mapeo de resistencias'], indice: 'NDRE', nota: 'Mapeo de escapes pre-cosecha para planificar el barbecho siguiente.' }
+                ]
+            }
+        ];
+
+        const TYPE_LABELS = {
+            'barbecho-largo': 'Barbecho largo',
+            'barbecho-corto': 'Barbecho corto',
+            'pre-emergencia': 'Pre-siembra / Pre-emergencia',
+            'post-emergencia': 'Post-emergencia',
+            'escapes': 'Escapes pre-cosecha'
+        };
+
+        // ─────────────────────────────────────────────────────────
+        // STATE
+        // ─────────────────────────────────────────────────────────
+        const state = {
+            mode: 'all',
+            crop: 'all',
+            moment: 'all',
+            cycle: 'all',
+            type: 'all'
+        };
+
+        // ─────────────────────────────────────────────────────────
+        // RENDER WEEDS
+        // ─────────────────────────────────────────────────────────
+        function renderWeeds() {
+            const grid = document.getElementById('card-grid');
+            const meta = document.getElementById('results-meta');
+
+            const filtered = WEEDS.filter(w => {
+                if (state.mode === 'resistant' && (w.resistances.length === 0 || w.resistances[0] === 'Sin resistencia confirmada')) return false;
+                if (state.crop !== 'all' && !w.crops.includes(state.crop)) return false;
+                if (state.moment !== 'all' && !w.moments.includes(state.moment)) return false;
+                if (state.cycle !== 'all' && w.cycle !== state.cycle) return false;
+                if (state.type !== 'all' && w.type !== state.type) return false;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-filter"></i>
+                        <p>No hay malezas que coincidan con los filtros seleccionados.</p>
+                    </div>`;
+                meta.textContent = '0 especies';
+                return;
+            }
+
+            meta.textContent = `${filtered.length} ${filtered.length === 1 ? 'especie' : 'especies'} en el catálogo`;
+            grid.innerHTML = filtered.map(w => {
+                const cycleLabel = w.cycle === 'oi' ? 'Otoño-invernal' : 'Primavero-estival';
+                const detClass = `det-${w.detection.level}`;
+                const detLabel = w.detection.level.charAt(0).toUpperCase() + w.detection.level.slice(1);
+                const resistVisible = (w.resistances[0] === 'Sin resistencia confirmada')
+                    ? `<span class="resistance-pill none">Sin resistencia confirmada</span>`
+                    : w.resistances.slice(0,3).map(r => `<span class="resistance-pill">${r}</span>`).join('');
+                return `
+                    <article class="weed-card" data-id="${w.id}">
+                        <div class="weed-card-head">
+                            <div>
+                                <h3>${w.scientific}</h3>
+                                <div class="weed-common">${w.common}</div>
+                                <div class="weed-meta">${w.family} · ${w.life}</div>
+                            </div>
+                            <span class="cycle-tag ${w.cycle}">${cycleLabel}</span>
+                        </div>
+                        <div class="resistance-row">${resistVisible}</div>
+                        <div class="detection-row">
+                            <span class="detection-badge ${detClass}">
+                                <span class="det-dot"></span> Detección ${detLabel}
+                            </span>
+                            <span class="more-link">Ver detalle <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            grid.querySelectorAll('.weed-card').forEach(card => {
+                card.addEventListener('click', () => openModal(card.dataset.id));
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // MODAL
+        // ─────────────────────────────────────────────────────────
+        function openModal(id) {
+            const w = WEEDS.find(x => x.id === id);
+            if (!w) return;
+
+            const cycleLabel = w.cycle === 'oi' ? 'Otoño-invernal' : 'Primavero-estival';
+            const typeLabel = w.type === 'dicot' ? 'Dicotiledónea' : 'Monocotiledónea';
+            const detClass = `det-${w.detection.level}`;
+            const detLabel = w.detection.level.charAt(0).toUpperCase() + w.detection.level.slice(1);
+
+            const resistVisible = (w.resistances[0] === 'Sin resistencia confirmada')
+                ? `<span class="resistance-pill none">Sin resistencia confirmada</span>`
+                : w.resistances.map(r => `<span class="resistance-pill">${r}</span>`).join('');
+
+            document.getElementById('modal-header').innerHTML = `
+                <span class="eyebrow">${cycleLabel} · ${typeLabel}</span>
+                <h2>${w.scientific}</h2>
+                <div class="modal-common">${w.common}</div>
+                <div class="modal-meta">${w.family} · Ciclo ${w.life.toLowerCase()}</div>
+            `;
+
+            document.getElementById('modal-body').innerHTML = `
+                <div class="modal-section">
+                    <h4>Caracterización y comportamiento</h4>
+                    <p>${w.description}</p>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Resistencias documentadas</h4>
+                    <div class="resistance-row" style="margin-bottom: 0.6rem;">${resistVisible}</div>
+                    <p style="font-size: 0.85rem;">${w.resistance_note}</p>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Mapeo con dron</h4>
+                    <div class="modal-row">
+                        <div class="modal-block ${detClass}">
+                            <h5><i class="fas fa-circle"></i> Detección: ${detLabel}</h5>
+                            <p>${w.detection.text}</p>
+                        </div>
+                        <div class="modal-block">
+                            <h5><i class="fas fa-layer-group"></i> Índice sugerido: ${w.index}</h5>
+                            <p>${w.index_note}</p>
+                            <a href="indices-mavic3m.html" class="index-link">
+                                Ver detalle del índice <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Estrategia de manejo · principios activos sugeridos</h4>
+                    <div class="strategy-list">
+                        ${w.strategy.map(s => `
+                            <div class="strategy-item">
+                                <div class="strategy-item-title">${s.titulo}</div>
+                                <div class="strategy-actives">
+                                    ${s.principios.map(p => `<span class="active-pill">${p}</span>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Ventana de germinación</h4>
+                    <div class="germ-strip">
+                        ${MONTHS.map((m, i) => {
+                            const active = w.germination.includes(i+1);
+                            return `<div class="germ-cell ${active ? 'active' : ''}">${m}</div>`;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Fuente</h4>
+                    <div class="modal-source">${w.source}</div>
+                </div>
+            `;
+
+            document.getElementById('modal-backdrop').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-backdrop').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // TIMELINE
+        // ─────────────────────────────────────────────────────────
+        function renderTimeline() {
+            const grid = document.getElementById('timeline-grid');
+            let html = '<div></div>';
+            MONTHS.forEach(m => { html += `<div class="tl-month-head">${m}</div>`; });
+
+            CROPS.forEach(crop => {
+                html += `<div class="tl-crop-label"><i class="fas ${crop.icon}"></i>${crop.label}</div>`;
+                const monthMap = {};
+                crop.cells.forEach(cell => {
+                    cell.months.forEach(mo => {
+                        monthMap[mo] = { ...cell };
+                    });
+                });
+                for (let i = 1; i <= 12; i++) {
+                    const cell = monthMap[i];
+                    if (cell) {
+                        const cellData = encodeURIComponent(JSON.stringify(cell));
+                        html += `<div class="tl-cell ${cell.type}" data-cell="${cellData}" data-crop="${crop.label}" data-month="${MONTHS[i-1]}"></div>`;
+                    } else {
+                        html += '<div></div>';
+                    }
+                }
+            });
+
+            grid.innerHTML = html;
+
+            grid.querySelectorAll('.tl-cell').forEach(c => {
+                c.addEventListener('click', () => {
+                    const cell = JSON.parse(decodeURIComponent(c.dataset.cell));
+                    const tt = document.getElementById('tl-tooltip');
+                    document.getElementById('tl-meta').textContent = `${c.dataset.crop} · ${c.dataset.month} · ${TYPE_LABELS[cell.type]}`;
+                    document.getElementById('tl-content').innerHTML = `
+                        <p style="margin-bottom: 0.6rem;">${cell.nota}</p>
+                        <div class="tl-tooltip-row">
+                            ${cell.principios.map(p => `<span class="tl-tag">${p}</span>`).join('')}
+                        </div>
+                        <p style="margin-top: 0.7rem; font-size: 0.78rem;"><strong>Índice sugerido:</strong> ${cell.indice}</p>
+                    `;
+                    tt.classList.add('active');
+                });
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // CALCULATOR
+        // ─────────────────────────────────────────────────────────
+        function recompute() {
+            const ha = parseFloat(document.getElementById('calc-ha').value);
+            const cov = parseFloat(document.getElementById('calc-coverage').value);
+            const herb = parseFloat(document.getElementById('calc-herb').value);
+            const service = document.querySelector('input[name="service"]:checked').value;
+            const serviceCost = service === 'process' ? 2.8 : 6.5;
+
+            document.getElementById('ha-val').textContent = ha;
+            document.getElementById('coverage-val').textContent = cov;
+            document.getElementById('herb-val').textContent = herb;
+
+            const uniformTotal = ha * herb;
+            const treatedHa = ha * cov / 100;
+            const selectiveTotal = treatedHa * herb + ha * serviceCost;
+            const savings = Math.max(0, uniformTotal - selectiveTotal);
+            const savingsHa = ha > 0 ? savings / ha : 0;
+            const pct = uniformTotal > 0 ? (savings / uniformTotal) * 100 : 0;
+            const reduction = 100 - cov;
+            const breakEven = herb > serviceCost ? Math.max(0, (1 - serviceCost / herb) * 100) : 0;
+
+            document.getElementById('out-savings-total').textContent = Math.round(savings).toLocaleString('es-AR');
+            document.getElementById('out-savings-ha').textContent = savingsHa.toFixed(2);
+            document.getElementById('out-pct').textContent = Math.round(pct);
+            document.getElementById('out-reduction').textContent = Math.round(reduction);
+            document.getElementById('out-breakeven').textContent = Math.round(breakEven);
+
+            const warn = document.getElementById('out-warn');
+            if (service === 'fly' && ha < 50) {
+                warn.classList.add('active');
+            } else {
+                warn.classList.remove('active');
+            }
+
+            document.querySelectorAll('.calc-radio').forEach(r => {
+                const input = r.querySelector('input[type="radio"]');
+                if (input && input.checked) r.classList.add('checked');
+                else r.classList.remove('checked');
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // EVENT LISTENERS
+        // ─────────────────────────────────────────────────────────
+        document.querySelectorAll('.mode-toggle button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-toggle button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.mode = btn.dataset.mode;
+                renderWeeds();
+            });
+        });
+
+        ['crop','moment','cycle','type'].forEach(filter => {
+            document.getElementById(`${filter}-chips`).addEventListener('click', e => {
+                if (!e.target.matches('.chip')) return;
+                document.querySelectorAll(`#${filter}-chips .chip`).forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                state[filter] = e.target.dataset[filter];
+                renderWeeds();
+            });
+        });
+
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        document.getElementById('modal-backdrop').addEventListener('click', e => {
+            if (e.target.id === 'modal-backdrop') closeModal();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        ['calc-ha','calc-coverage','calc-herb'].forEach(id => {
+            document.getElementById(id).addEventListener('input', recompute);
+        });
+        document.querySelectorAll('input[name="service"]').forEach(r => {
+            r.addEventListener('change', recompute);
+        });
+
+        // ─────────────────────────────────────────────────────────
+        // INIT
+        // ─────────────────────────────────────────────────────────
+        renderWeeds();
+        renderTimeline();
+        recompute();
+    </script>
+</body>
+</html>

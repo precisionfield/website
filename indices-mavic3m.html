@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Índices Espectrales · Mavic 3M | PrecisionField</title>
+    <meta name="description" content="Qué índice espectral usar con tu DJI Mavic 3M, cuándo y para qué cultivo. Guía interactiva para productores y asesores agronómicos.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-deep:    #1a3a2a;
+            --green-mid:     #2d5a40;
+            --green-soft:    #4a7c59;
+            --green-light:   #7eb897;
+            --green-pale:    #e8f2ec;
+            --earth-dark:    #5c3d1e;
+            --earth-mid:     #b8702b;
+            --earth-light:   #d4956a;
+            --earth-pale:    #faf3ec;
+            --cream:         #f7f4ef;
+            --white:         #ffffff;
+            --text-dark:     #1c2820;
+            --text-mid:      #3d5248;
+            --text-light:    #6b8878;
+            --border:        #d4e2da;
+            --shadow-sm:     0 2px 12px rgba(26,58,42,0.08);
+            --shadow-md:     0 8px 32px rgba(26,58,42,0.12);
+            --shadow-lg:     0 20px 60px rgba(26,58,42,0.16);
+            --radius-sm:     6px;
+            --radius-md:     12px;
+            --radius-lg:     20px;
+            --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        ul { list-style: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+        a { color: inherit; text-decoration: none; }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            line-height: 1.2;
+            color: var(--green-deep);
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--earth-mid);
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── HEADER / LOGO ── */
+        .tool-header {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            padding: 1.5rem 2rem;
+        }
+        .tool-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .tool-logo {
+            height: 52px;
+            width: auto;
+            display: block;
+        }
+        .header-back {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+        .header-back:hover { color: var(--white); }
+
+        /* ── HERO ── */
+        .tool-hero {
+            background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-hero::before {
+            content: '';
+            position: absolute;
+            top: -120px; right: -120px;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: rgba(126,184,151,0.08);
+            pointer-events: none;
+        }
+        .tool-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(184,112,43,0.06);
+            pointer-events: none;
+        }
+        .tool-hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .tool-hero .eyebrow { color: var(--green-light); }
+        .tool-hero h1 {
+            font-size: clamp(2rem, 4.5vw, 3.4rem);
+            color: var(--white);
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+        .tool-hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.78);
+            max-width: 640px;
+        }
+
+        /* ── BAND VISUALIZATION ── */
+        .bands-section {
+            background: var(--white);
+            padding: 3rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .bands-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .bands-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .bands-header h2 {
+            font-size: 1.5rem;
+        }
+        .bands-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+        }
+        .spectrum {
+            position: relative;
+            height: 70px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(to right,
+                #4a148c 0%,
+                #1a237e 12%,
+                #00838f 25%,
+                #2e7d32 38%,
+                #f57f17 55%,
+                #c62828 65%,
+                #6d4c41 78%,
+                #3e2723 100%
+            );
+            margin-bottom: 0.5rem;
+            opacity: 0.85;
+        }
+        .band-marker {
+            position: absolute;
+            top: -8px;
+            bottom: -8px;
+            border: 2px solid var(--white);
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 4px;
+        }
+        .band-marker-label {
+            position: absolute;
+            top: -32px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--green-deep);
+            white-space: nowrap;
+        }
+        .band-marker-wave {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+        .spectrum-axis {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-light);
+            letter-spacing: 0.05em;
+        }
+
+        /* ── CONTROLS ── */
+        .controls-section {
+            background: rgba(247,244,239,0.95);
+            padding: 3rem 2rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+        .controls-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .mode-toggle {
+            display: inline-flex;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 4px;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .mode-toggle button {
+            padding: 0.6rem 1.4rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            border-radius: 999px;
+            color: var(--text-mid);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .mode-toggle button.active {
+            background: var(--green-mid);
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(45,90,64,0.3);
+        }
+        .mode-toggle button i {
+            font-size: 0.85rem;
+        }
+
+        .filters {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-light);
+            min-width: 80px;
+        }
+        .chips {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .chip {
+            padding: 0.35rem 0.85rem;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text-mid);
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .chip:hover {
+            border-color: var(--green-soft);
+            color: var(--green-deep);
+        }
+        .chip.active {
+            background: var(--green-deep);
+            color: var(--white);
+            border-color: var(--green-deep);
+        }
+        .chip.earth-accent.active {
+            background: var(--earth-mid);
+            border-color: var(--earth-mid);
+        }
+
+        /* ── RESULTS ── */
+        .results-section {
+            padding: 2.5rem 2rem 4rem;
+        }
+        .results-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .results-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* Index card */
+        .idx-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .idx-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--earth-mid);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition);
+        }
+        .idx-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--green-light);
+        }
+        .idx-card:hover::before { transform: scaleX(1); }
+
+        .idx-card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+        .idx-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--green-deep);
+        }
+        .idx-card-fullname {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+        .idx-card-tag {
+            font-size: 0.7rem;
+            background: var(--green-pale);
+            color: var(--green-deep);
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .idx-card-desc {
+            font-size: 0.88rem;
+            color: var(--text-mid);
+            line-height: 1.55;
+        }
+
+        .band-pills {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .band-pill {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            color: var(--white);
+            letter-spacing: 0.05em;
+        }
+        .bp-G  { background: #2e7d32; }
+        .bp-R  { background: #c62828; }
+        .bp-RE { background: #8d4e38; }
+        .bp-NIR { background: #4a2317; }
+
+        .idx-card-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.78rem;
+            color: var(--text-light);
+        }
+        .idx-card-foot .more {
+            color: var(--earth-mid);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Problem card */
+        .prob-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .prob-card:hover {
+            border-color: var(--earth-light);
+            box-shadow: var(--shadow-sm);
+        }
+        .prob-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--earth-pale);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--earth-mid);
+            font-size: 1.1rem;
+        }
+        .prob-card h3 {
+            font-size: 1.2rem;
+        }
+        .prob-card p {
+            font-size: 0.88rem;
+            color: var(--text-mid);
+        }
+        .prob-recommendations {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border);
+        }
+        .prob-rec-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+        .prob-rec-list {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .prob-rec-list .idx-pill {
+            background: var(--green-pale);
+            color: var(--green-deep);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .prob-rec-list .idx-pill:hover {
+            background: var(--green-deep);
+            color: var(--white);
+        }
+        .prob-rec-list .idx-pill.primary {
+            background: var(--green-deep);
+            color: var(--white);
+        }
+        .prob-rec-list .idx-pill.primary::before {
+            content: '★ ';
+            color: var(--earth-light);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            color: var(--green-light);
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        /* ── COMPARISON TABLE ── */
+        .compare-section {
+            background: var(--green-deep);
+            padding: 5rem 2rem;
+            color: var(--white);
+        }
+        .compare-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .compare-section .eyebrow { color: var(--green-light); }
+        .compare-section h2 {
+            color: var(--white);
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            margin-bottom: 1rem;
+        }
+        .compare-section > .compare-inner > p {
+            color: rgba(255,255,255,0.65);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+        }
+        thead {
+            background: rgba(255,255,255,0.06);
+        }
+        th {
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green-light);
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        td {
+            padding: 1rem 1.2rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.85);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            vertical-align: top;
+        }
+        tbody tr:hover {
+            background: rgba(255,255,255,0.04);
+        }
+        td.idx-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 1rem;
+        }
+        td .sat-bar {
+            display: inline-block;
+            width: 60px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            position: relative;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        td .sat-bar::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            height: 100%;
+            background: linear-gradient(to right, var(--green-light), var(--earth-light));
+            border-radius: 3px;
+            width: var(--sat, 50%);
+        }
+
+        /* ── REFERENCES SECTION ── */
+        .references-section {
+            background: var(--white);
+            padding: 5rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .references-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .references-section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            margin-bottom: 1rem;
+        }
+        .references-section > .references-inner > p {
+            color: var(--text-mid);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+        }
+        .ref-groups {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        .ref-group h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--earth-mid);
+            margin-bottom: 1.2rem;
+            font-weight: 700;
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .ref-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .ref-item {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            padding-left: 1.2rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        .ref-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 6px;
+            height: 6px;
+            background: var(--earth-mid);
+            border-radius: 50%;
+        }
+        .ref-item strong {
+            color: var(--green-deep);
+            font-weight: 600;
+        }
+        .ref-item em {
+            color: var(--text-dark);
+            font-style: italic;
+        }
+        .ref-item .ref-tag {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            background: var(--green-pale);
+            color: var(--green-deep);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            margin-right: 0.4rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            vertical-align: middle;
+        }
+
+        /* ── MODAL ── */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(26,40,32,0.55);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .modal-backdrop.open {
+            display: flex;
+            opacity: 1;
+        }
+        .modal {
+            background: var(--cream);
+            border-radius: var(--radius-lg);
+            max-width: 760px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-backdrop.open .modal {
+            transform: translateY(0);
+        }
+        .modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 10;
+        }
+        .modal-close:hover {
+            background: var(--green-deep);
+            color: var(--white);
+            border-color: var(--green-deep);
+            transform: rotate(90deg);
+        }
+        .modal-header {
+            padding: 2.5rem 2.5rem 1.5rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        .modal-header .eyebrow { margin-bottom: 0.4rem; }
+        .modal-header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 0.3rem;
+        }
+        .modal-header .modal-fullname {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            letter-spacing: 0.08em;
+            margin-bottom: 1rem;
+        }
+        .modal-formula {
+            background: var(--green-deep);
+            color: var(--green-light);
+            padding: 1rem 1.3rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+            letter-spacing: 0.02em;
+        }
+        .modal-body {
+            padding: 2rem 2.5rem 2.5rem;
+        }
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+        .modal-section:last-child { margin-bottom: 0; }
+        .modal-section h4 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--earth-mid);
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+        .modal-section p {
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            line-height: 1.7;
+        }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .pc-block {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem;
+            border-left: 3px solid;
+        }
+        .pc-block.pros { border-color: var(--green-soft); }
+        .pc-block.cons { border-color: var(--earth-mid); }
+        .pc-block h5 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .pc-block.pros h5 { color: var(--green-mid); }
+        .pc-block.cons h5 { color: var(--earth-dark); }
+        .pc-block ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+        .pc-block li {
+            font-size: 0.83rem;
+            color: var(--text-mid);
+            padding-left: 1rem;
+            position: relative;
+            line-height: 1.5;
+        }
+        .pc-block.pros li::before {
+            content: '+';
+            position: absolute;
+            left: 0;
+            color: var(--green-soft);
+            font-weight: 700;
+        }
+        .pc-block.cons li::before {
+            content: '−';
+            position: absolute;
+            left: 0;
+            color: var(--earth-mid);
+            font-weight: 700;
+        }
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.6rem;
+        }
+        .crop-item {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border);
+            font-size: 0.82rem;
+        }
+        .crop-item strong {
+            display: block;
+            color: var(--green-deep);
+            margin-bottom: 0.2rem;
+            font-size: 0.88rem;
+        }
+        .crop-item span {
+            color: var(--text-light);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+        }
+        .stages-bar {
+            display: flex;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--white);
+            border: 1px solid var(--border);
+        }
+        .stage-cell {
+            flex: 1;
+            padding: 0.7rem 0.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-light);
+            border-right: 1px solid var(--border);
+            position: relative;
+        }
+        .stage-cell:last-child { border-right: none; }
+        .stage-cell.active {
+            background: var(--green-pale);
+            color: var(--green-deep);
+            font-weight: 600;
+        }
+        .stage-cell.peak {
+            background: var(--green-soft);
+            color: var(--white);
+            font-weight: 700;
+        }
+        .modal-source {
+            background: var(--white);
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--green-soft);
+            font-size: 0.83rem;
+            color: var(--text-mid);
+            line-height: 1.6;
+        }
+        .modal-source strong {
+            color: var(--green-deep);
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            background: linear-gradient(135deg, var(--earth-pale) 0%, var(--cream) 100%);
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        .cta-inner {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta-section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            font-size: 1.05rem;
+            color: var(--text-mid);
+            margin-bottom: 2rem;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 1.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-primary {
+            background: var(--green-deep);
+            color: var(--white);
+        }
+        .btn-primary:hover {
+            background: var(--green-mid);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--green-deep);
+            border: 2px solid var(--green-deep);
+        }
+        .btn-outline:hover {
+            background: var(--green-deep);
+            color: var(--white);
+        }
+
+        /* ── FOOTER ── */
+        .tool-footer {
+            background: var(--green-deep);
+            padding: 2.5rem 2rem;
+        }
+        .tool-footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .footer-logo {
+            height: 40px;
+            width: auto;
+            opacity: 0.85;
+        }
+        .tool-footer p {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.05em;
+        }
+        .tool-footer a {
+            color: var(--green-light);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .tool-header { padding: 1rem 1.25rem; }
+            .tool-logo { height: 42px; }
+            .tool-hero { padding: 6rem 1.25rem 3rem; }
+            .bands-section, .controls-section, .results-section,
+            .compare-section, .references-section, .cta-section { padding-left: 1.25rem; padding-right: 1.25rem; }
+            .filter-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .filter-label { min-width: auto; }
+            .pros-cons { grid-template-columns: 1fr; }
+            .ref-groups { grid-template-columns: 1fr; gap: 2rem; }
+            .modal-header { padding: 2rem 1.5rem 1.2rem; }
+            .modal-body { padding: 1.5rem; }
+            .modal-header h2 { font-size: 1.6rem; }
+            .controls-section { position: relative; }
+            .tool-footer-inner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER + LOGO -->
+    <header class="tool-header">
+        <div class="tool-header-inner">
+            <a href="index.html"><img src="assets/images/logo.png" alt="PrecisionField" class="tool-logo"></a>
+            <a href="index.html" class="header-back">
+                <i class="fas fa-arrow-left"></i> Volver al sitio
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="tool-hero">
+        <div class="tool-hero-inner">
+            <span class="eyebrow">Herramienta interactiva</span>
+            <h1>¿Qué índice usar con tu Mavic 3M?</h1>
+            <p>Una guía práctica para sacarle el máximo provecho a la cámara multiespectral del DJI Mavic 3M en los principales cultivos extensivos de Argentina.</p>
+        </div>
+    </section>
+
+    <!-- BAND VISUALIZATION -->
+    <section class="bands-section">
+        <div class="bands-inner">
+            <div class="bands-header">
+                <h2>Las 4 bandas multiespectrales</h2>
+                <span class="bands-meta">DJI MAVIC 3M · SENSOR 5 MP × 4 BANDAS + RGB 20 MP</span>
+            </div>
+            <div class="spectrum">
+                <div class="band-marker" style="left: 32%; width: 4%;">
+                    <span class="band-marker-label">GREEN</span>
+                    <span class="band-marker-wave">560 nm</span>
+                </div>
+                <div class="band-marker" style="left: 50%; width: 4%;">
+                    <span class="band-marker-label">RED</span>
+                    <span class="band-marker-wave">650 nm</span>
+                </div>
+                <div class="band-marker" style="left: 66%; width: 4%;">
+                    <span class="band-marker-label">RED EDGE</span>
+                    <span class="band-marker-wave">730 nm</span>
+                </div>
+                <div class="band-marker" style="left: 92%; width: 6%;">
+                    <span class="band-marker-label">NIR</span>
+                    <span class="band-marker-wave">860 nm</span>
+                </div>
+            </div>
+            <div class="spectrum-axis">
+                <span>400 nm</span>
+                <span>500 nm</span>
+                <span>600 nm</span>
+                <span>700 nm</span>
+                <span>800 nm</span>
+                <span>900 nm</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTROLS -->
+    <div class="controls-section">
+        <div class="controls-inner">
+            <div class="mode-toggle" role="tablist">
+                <button id="mode-index" class="active" data-mode="index">
+                    <i class="fas fa-layer-group"></i> Por índice
+                </button>
+                <button id="mode-problem" data-mode="problem">
+                    <i class="fas fa-seedling"></i> Por problema agronómico
+                </button>
+            </div>
+            <div class="filters">
+                <div class="filter-row">
+                    <span class="filter-label">Cultivo</span>
+                    <div class="chips" id="crop-chips">
+                        <button class="chip active" data-crop="all">Todos</button>
+                        <button class="chip" data-crop="soja">Soja</button>
+                        <button class="chip" data-crop="maiz">Maíz</button>
+                        <button class="chip" data-crop="trigo">Trigo</button>
+                        <button class="chip" data-crop="girasol">Girasol</button>
+                        <button class="chip" data-crop="cebada">Cebada</button>
+                        <button class="chip" data-crop="sorgo">Sorgo</button>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">Etapa</span>
+                    <div class="chips" id="stage-chips">
+                        <button class="chip earth-accent active" data-stage="all">Todas</button>
+                        <button class="chip earth-accent" data-stage="emergencia">Emergencia</button>
+                        <button class="chip earth-accent" data-stage="vegetativo-temprano">Veg. temprano</button>
+                        <button class="chip earth-accent" data-stage="vegetativo-avanzado">Veg. avanzado</button>
+                        <button class="chip earth-accent" data-stage="floracion">Floración</button>
+                        <button class="chip earth-accent" data-stage="llenado">Llenado</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <section class="results-section">
+        <div class="results-inner">
+            <div class="results-meta" id="results-meta">6 índices disponibles</div>
+            <div class="card-grid" id="card-grid"></div>
+        </div>
+    </section>
+
+    <!-- COMPARISON TABLE -->
+    <section class="compare-section">
+        <div class="compare-inner">
+            <span class="eyebrow">Vista rápida</span>
+            <h2>Comparación de índices</h2>
+            <p>Una mirada lateral para elegir rápido el índice que mejor se adapta al objetivo del vuelo.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Índice</th>
+                            <th>Mejor para</th>
+                            <th>Etapa óptima</th>
+                            <th>Saturación</th>
+                            <th>Sensible a N</th>
+                            <th>Corrige suelo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compare-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- REFERENCES -->
+    <section class="references-section">
+        <div class="references-inner">
+            <span class="eyebrow">Fuentes</span>
+            <h2>Bibliografía y referencias técnicas</h2>
+            <p>Esta guía se construyó a partir de la literatura científica original que define cada índice y de la bibliografía agronómica utilizada para describir las etapas fenológicas de los cultivos.</p>
+
+            <div class="ref-groups">
+                <div class="ref-group">
+                    <h3>Índices espectrales</h3>
+                    <div class="ref-list">
+                        <div class="ref-item">
+                            <span class="ref-tag">NDVI</span>
+                            Rouse, J.W., Haas, R.H., Schell, J.A. &amp; Deering, D.W. (1974). <em>Monitoring vegetation systems in the Great Plains with ERTS</em>. NASA Special Publication, 351, 309–317.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">NDRE</span>
+                            Barnes, E.M., Clarke, T.R., Richards, S.E., Colaizzi, P.D., Haberland, J., Kostrzewski, M., et al. (2000). <em>Coincident detection of crop water stress, nitrogen status and canopy density using ground based multispectral data</em>. Proceedings of the 5th International Conference on Precision Agriculture, Bloomington, MN.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">GNDVI</span>
+                            Gitelson, A.A., Kaufman, Y.J. &amp; Merzlyak, M.N. (1996). <em>Use of a green channel in remote sensing of global vegetation from EOS-MODIS</em>. Remote Sensing of Environment, 58(3), 289–298.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">LCI</span>
+                            Datt, B. (1999). <em>A new reflectance index for remote sensing of chlorophyll content in higher plants: tests using Eucalyptus leaves</em>. Journal of Plant Physiology, 154(1), 30–36.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">OSAVI</span>
+                            Rondeaux, G., Steven, M. &amp; Baret, F. (1996). <em>Optimization of soil-adjusted vegetation indices</em>. Remote Sensing of Environment, 55(2), 95–107.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">NDWI</span>
+                            McFeeters, S.K. (1996). <em>The use of the Normalized Difference Water Index (NDWI) in the delineation of open water features</em>. International Journal of Remote Sensing, 17(7), 1425–1432.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ref-group">
+                    <h3>Fenología y aplicaciones</h3>
+                    <div class="ref-list">
+                        <div class="ref-item">
+                            <span class="ref-tag">SOJA</span>
+                            Fehr, W.R. &amp; Caviness, C.E. (1977). <em>Stages of soybean development</em>. Iowa State University, Cooperative Extension Service, Special Report 80.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">MAÍZ</span>
+                            Ritchie, S.W., Hanway, J.J. &amp; Benson, G.O. (1992). <em>How a corn plant develops</em>. Iowa State University, Cooperative Extension Service, Special Report 48.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">TRIGO/CEBADA</span>
+                            Zadoks, J.C., Chang, T.T. &amp; Konzak, C.F. (1974). <em>A decimal code for the growth stages of cereals</em>. Weed Research, 14(6), 415–421.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">GIRASOL</span>
+                            Schneiter, A.A. &amp; Miller, J.F. (1981). <em>Description of sunflower growth stages</em>. Crop Science, 21(6), 901–903.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">SORGO</span>
+                            Vanderlip, R.L. &amp; Reeves, H.E. (1972). <em>Growth stages of sorghum</em>. Agronomy Journal, 64(1), 13–16.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">SENSOR</span>
+                            DJI (2023). <em>DJI Mavic 3 Multispectral · User Manual &amp; Technical Specifications</em>. DJI Enterprise.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">N EN MAÍZ</span>
+                            Schepers, J.S., Blackmer, T.M., Wilhelm, W.W. &amp; Resende, M. (1996). <em>Transmittance and reflectance measurements of corn leaves from plants with different nitrogen and water supply</em>. Journal of Plant Physiology, 148(5), 523–529.
+                        </div>
+                        <div class="ref-item">
+                            <span class="ref-tag">AGRIC. PRECISIÓN</span>
+                            Bongiovanni, R., Mantovani, E.C., Best, S. &amp; Roel, A. (2006). <em>Agricultura de precisión: integrando conocimientos para una agricultura moderna y sustentable</em>. PROCISUR / IICA, Montevideo, Uruguay.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <span class="eyebrow">Soluciones PrecisionField</span>
+            <h2>¿Tenés un Mavic 3M y no sabés qué hacer con las imágenes?</h2>
+            <p>En PrecisionField transformamos tus vuelos en mapas listos para tomar decisiones agronómicas: prescripciones variables, mapas de malezas, fallas de implantación y más.</p>
+            <div class="cta-buttons">
+                <a href="index.html#contact" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Contactanos
+                </a>
+                <a href="https://wa.me/5491154251823" target="_blank" class="btn btn-outline">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="tool-footer">
+        <div class="tool-footer-inner">
+            <img src="assets/images/logo.png" alt="PrecisionField" class="footer-logo">
+            <p>&copy; 2026 <a href="index.html">PrecisionField&reg;</a> · Procesamiento y análisis de imágenes satelitales y de drones para el agro</p>
+        </div>
+    </footer>
+
+    <!-- MODAL -->
+    <div class="modal-backdrop" id="modal-backdrop">
+        <div class="modal" id="modal" role="dialog" aria-modal="true">
+            <button class="modal-close" id="modal-close" aria-label="Cerrar">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header" id="modal-header"></div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // ─────────────────────────────────────────────────────────
+        // DATA
+        // ─────────────────────────────────────────────────────────
+        const STAGES = [
+            { id: 'emergencia', label: 'Emergencia', short: 'E' },
+            { id: 'vegetativo-temprano', label: 'Veg. temprano', short: 'Vt' },
+            { id: 'vegetativo-avanzado', label: 'Veg. avanzado', short: 'Va' },
+            { id: 'floracion', label: 'Floración', short: 'Fl' },
+            { id: 'llenado', label: 'Llenado', short: 'Ll' },
+            { id: 'madurez', label: 'Madurez', short: 'M' }
+        ];
+
+        const INDICES = [
+            {
+                id: 'NDVI',
+                fullname: 'Normalized Difference Vegetation Index',
+                tag: 'Vigor general',
+                bands: ['NIR', 'R'],
+                formula: '(NIR − Red) / (NIR + Red)',
+                short: 'El estándar global. Ideal como punto de partida para monitoreo de vigor y biomasa.',
+                description: 'NDVI es el índice más utilizado en teledetección agrícola. Aprovecha el contraste entre la fuerte reflexión del NIR por la estructura celular de las hojas sanas y la absorción del rojo por la clorofila. Es excelente para diagnóstico general, pero presenta saturación con índices de área foliar (LAI) altos, lo que limita su utilidad en cultivos densos en etapas avanzadas.',
+                pros: [
+                    'Estándar reconocido, mucha bibliografía y comparabilidad',
+                    'Sensible a presencia de vegetación verde activa',
+                    'Buen detector de fallas de implantación en etapas tempranas',
+                    'Útil para series temporales y comparación entre campañas'
+                ],
+                cons: [
+                    'Satura con LAI > 3 (cultivos densos en floración/llenado)',
+                    'Sensible a la influencia del suelo cuando la cobertura es baja',
+                    'No discrimina bien entre diferencias finas de N',
+                    'Afectado por sombras y ángulo solar'
+                ],
+                problems: ['vigor', 'malezas', 'rendimiento', 'implantacion'],
+                stages: ['vegetativo-temprano', 'vegetativo-avanzado', 'floracion'],
+                peakStage: 'vegetativo-avanzado',
+                crops: {
+                    soja: { use: 'Hasta R3, satura en R4-R5', stage: 'V2-R3' },
+                    maiz: { use: 'Hasta V8, satura en VT-R1', stage: 'V2-V8' },
+                    trigo: { use: 'Macollaje a encañazón', stage: 'Z21-Z39' },
+                    girasol: { use: 'Hasta R4, satura en R5', stage: 'V4-R4' },
+                    cebada: { use: 'Macollaje y encañazón', stage: 'Z21-Z39' },
+                    sorgo: { use: 'Vegetativo y embuchado', stage: 'V3-Bot' }
+                },
+                source: 'Rouse et al. (1974). <strong>Monitoring vegetation systems in the Great Plains with ERTS</strong>. NASA Special Publication, 351, 309–317.',
+                saturation: 90, sensitivityN: 30, soilCorrection: 10
+            },
+            {
+                id: 'NDRE',
+                fullname: 'Normalized Difference Red Edge',
+                tag: 'Nitrógeno',
+                bands: ['NIR', 'RE'],
+                formula: '(NIR − RedEdge) / (NIR + RedEdge)',
+                short: 'El mejor aliado para diagnóstico de N en cultivos densos. No satura como NDVI.',
+                description: 'NDRE aprovecha la región del Red Edge (730 nm), una zona del espectro extremadamente sensible al contenido de clorofila y nitrógeno foliar. Penetra mejor el dosel que el NDVI, lo que lo hace ideal cuando el cultivo está cerrado y NDVI ya no aporta información. Es la estrella del Mavic 3M para diagnóstico nutricional.',
+                pros: [
+                    'No satura tan rápido como NDVI: útil en floración y llenado',
+                    'Altamente sensible a contenido de N en hoja',
+                    'Detecta diferencias sutiles entre ambientes en cultivos densos',
+                    'Excelente para prescripciones de fertilización variable'
+                ],
+                cons: [
+                    'Menos efectivo en etapas muy tempranas (suelo desnudo)',
+                    'Requiere correcta calibración radiométrica para comparar fechas',
+                    'Interpretación menos intuitiva que NDVI',
+                    'Sensible a estrés hídrico (puede confundirse con déficit N)'
+                ],
+                problems: ['nitrogeno', 'clorofila', 'estres-temprano', 'rendimiento'],
+                stages: ['vegetativo-avanzado', 'floracion', 'llenado'],
+                peakStage: 'floracion',
+                crops: {
+                    soja: { use: 'Excelente en R1-R5 para diagnóstico N/clorofila', stage: 'R1-R5' },
+                    maiz: { use: 'Indispensable en V8-R2 para refertilización', stage: 'V8-R2' },
+                    trigo: { use: 'Ajuste de N en encañazón y hoja bandera', stage: 'Z31-Z49' },
+                    girasol: { use: 'R1-R6 para diagnóstico nutricional', stage: 'R1-R6' },
+                    cebada: { use: 'Encañazón a hoja bandera', stage: 'Z31-Z49' },
+                    sorgo: { use: 'Embuchado a antesis', stage: 'Bot-Ant' }
+                },
+                source: 'Barnes et al. (2000). <strong>Coincident detection of crop water stress, nitrogen status and canopy density using ground based multispectral data</strong>. 5th Int. Conf. on Precision Agriculture.',
+                saturation: 30, sensitivityN: 95, soilCorrection: 20
+            },
+            {
+                id: 'GNDVI',
+                fullname: 'Green Normalized Difference Vegetation Index',
+                tag: 'Clorofila',
+                bands: ['NIR', 'G'],
+                formula: '(NIR − Green) / (NIR + Green)',
+                short: 'Más sensible a clorofila que NDVI. Ideal para etapas medias y tardías.',
+                description: 'GNDVI sustituye la banda roja del NDVI por la verde, donde la clorofila también absorbe luz pero de manera diferente. Como resultado, es más sensible a variaciones de clorofila y tiende a saturar en niveles más altos de biomasa que el NDVI. Históricamente se usa como complemento, especialmente en etapas reproductivas.',
+                pros: [
+                    'Mayor sensibilidad a clorofila que NDVI',
+                    'Satura un poco más tarde que NDVI',
+                    'Útil en etapas reproductivas para evaluar senescencia',
+                    'Buen complemento en análisis multitemporal'
+                ],
+                cons: [
+                    'Menos sensible al estrés N que NDRE',
+                    'Sigue teniendo problemas de saturación en biomasa muy alta',
+                    'Menor adopción que NDVI o NDRE',
+                    'Requiere validación a campo para interpretación'
+                ],
+                problems: ['clorofila', 'rendimiento', 'vigor'],
+                stages: ['vegetativo-avanzado', 'floracion', 'llenado'],
+                peakStage: 'llenado',
+                crops: {
+                    soja: { use: 'R3-R6 para evaluar llenado y senescencia', stage: 'R3-R6' },
+                    maiz: { use: 'R1-R5, complemento a NDRE en llenado', stage: 'R1-R5' },
+                    trigo: { use: 'Espigazón a llenado de grano', stage: 'Z51-Z85' },
+                    girasol: { use: 'R5-R8 evaluación de llenado', stage: 'R5-R8' },
+                    cebada: { use: 'Espigazón y llenado', stage: 'Z51-Z85' },
+                    sorgo: { use: 'Floración y grano lechoso', stage: 'Ant-Lech' }
+                },
+                source: 'Gitelson, Kaufman &amp; Merzlyak (1996). <strong>Use of a green channel in remote sensing of global vegetation from EOS-MODIS</strong>. Remote Sensing of Environment, 58(3), 289–298.',
+                saturation: 70, sensitivityN: 50, soilCorrection: 15
+            },
+            {
+                id: 'LCI',
+                fullname: 'Leaf Chlorophyll Index',
+                tag: 'Clorofila',
+                bands: ['NIR', 'RE', 'R'],
+                formula: '(NIR − RedEdge) / (NIR + Red)',
+                short: 'Combina la sensibilidad del Red Edge con la corrección por banda roja.',
+                description: 'LCI es un índice mixto que combina el numerador del NDRE con el denominador del NDVI, lo que lo hace particularmente sensible a clorofila pero con mejor comportamiento en cobertura variable. Es el índice por defecto en muchas plataformas de DJI y resulta una alternativa interesante para diagnóstico de clorofila en etapas intermedias.',
+                pros: [
+                    'Buena sensibilidad a clorofila',
+                    'Disponible nativo en DJI Terra y procesadores compatibles',
+                    'Mejor que NDRE en cobertura intermedia',
+                    'Buen indicador de estrés temprano'
+                ],
+                cons: [
+                    'Menos estandarizado en la bibliografía científica',
+                    'Interpretación combinada (mezcla efectos)',
+                    'Sin rango fijo claro: requiere referencias por cultivo',
+                    'Puede ser ambiguo en suelos muy claros'
+                ],
+                problems: ['clorofila', 'estres-temprano', 'nitrogeno'],
+                stages: ['vegetativo-avanzado', 'floracion'],
+                peakStage: 'vegetativo-avanzado',
+                crops: {
+                    soja: { use: 'V4-R3 monitoreo de clorofila', stage: 'V4-R3' },
+                    maiz: { use: 'V6-V12 estado clorofílico', stage: 'V6-V12' },
+                    trigo: { use: 'Macollaje avanzado a encañazón', stage: 'Z25-Z39' },
+                    girasol: { use: 'V8-R3 evaluación general', stage: 'V8-R3' },
+                    cebada: { use: 'Macollaje a encañazón', stage: 'Z25-Z39' },
+                    sorgo: { use: 'Vegetativo avanzado', stage: 'V6-V10' }
+                },
+                source: 'Datt, B. (1999). <strong>A new reflectance index for remote sensing of chlorophyll content in higher plants</strong>. Journal of Plant Physiology, 154(1), 30–36.',
+                saturation: 50, sensitivityN: 70, soilCorrection: 35
+            },
+            {
+                id: 'OSAVI',
+                fullname: 'Optimized Soil-Adjusted Vegetation Index',
+                tag: 'Suelo desnudo',
+                bands: ['NIR', 'R'],
+                formula: '(NIR − Red) / (NIR + Red + 0.16)',
+                short: 'Como NDVI pero corrige el efecto del suelo. Ideal en cobertura baja.',
+                description: 'OSAVI es una optimización del SAVI con un factor de ajuste fijo (L = 0.16) que reduce significativamente la influencia de la reflectancia del suelo en cultivos con cobertura parcial. Es el índice de elección para evaluar fallas de implantación, calidad de stand y monitoreo en etapas tempranas, antes del cierre de surco.',
+                pros: [
+                    'Reduce drásticamente el efecto del suelo desnudo',
+                    'Excelente para evaluar implantación y stand temprano',
+                    'Más confiable que NDVI con < 50 % de cobertura',
+                    'Fácil de calcular y de interpretar'
+                ],
+                cons: [
+                    'Satura igual que NDVI en biomasa alta',
+                    'No mejora a NDVI con cobertura completa',
+                    'Factor L fijo: no se autoajusta dinámicamente',
+                    'Menos difundido comercialmente que NDVI'
+                ],
+                problems: ['implantacion', 'malezas', 'vigor'],
+                stages: ['emergencia', 'vegetativo-temprano'],
+                peakStage: 'vegetativo-temprano',
+                crops: {
+                    soja: { use: 'VE-V4 evaluación de stand', stage: 'VE-V4' },
+                    maiz: { use: 'VE-V6 fallas de siembra y stand', stage: 'VE-V6' },
+                    trigo: { use: 'Emergencia a inicio de macollaje', stage: 'Z10-Z21' },
+                    girasol: { use: 'VE-V6 monitoreo de stand', stage: 'VE-V6' },
+                    cebada: { use: 'Emergencia y macollaje inicial', stage: 'Z10-Z21' },
+                    sorgo: { use: 'VE-V4 stand', stage: 'VE-V4' }
+                },
+                source: 'Rondeaux, Steven &amp; Baret (1996). <strong>Optimization of soil-adjusted vegetation indices</strong>. Remote Sensing of Environment, 55(2), 95–107.',
+                saturation: 80, sensitivityN: 30, soilCorrection: 90
+            },
+            {
+                id: 'NDWI',
+                fullname: 'Normalized Difference Water Index (McFeeters)',
+                tag: 'Agua superficial',
+                bands: ['G', 'NIR'],
+                formula: '(Green − NIR) / (Green + NIR)',
+                short: 'Detecta cuerpos de agua y zonas anegadas. No mide estrés hídrico de la planta.',
+                description: 'Esta versión del NDWI (McFeeters, 1996) está diseñada para resaltar cuerpos de agua superficial. Resulta muy útil para mapear bajos, zonas anegadas o seguimiento post-lluvias. Importante: no debe confundirse con el NDWI de Gao para humedad vegetal, que requiere banda SWIR (no presente en el Mavic 3M). Para estrés hídrico de planta, se usan otros enfoques.',
+                pros: [
+                    'Excelente delimitación de bajos y zonas anegadas',
+                    'Útil para diagnóstico post-eventos climáticos',
+                    'Permite calcular superficie afectada con precisión',
+                    'Complemento clave en lotes con problemas de drenaje'
+                ],
+                cons: [
+                    'NO mide estrés hídrico de la planta (necesita SWIR)',
+                    'Sensible a sombras y nubes (en satélite)',
+                    'Algas o vegetación en agua pueden alterar la lectura',
+                    'En cultivos densos pierde utilidad'
+                ],
+                problems: ['anegamiento'],
+                stages: ['emergencia', 'vegetativo-temprano', 'vegetativo-avanzado', 'floracion', 'llenado', 'madurez'],
+                peakStage: 'emergencia',
+                crops: {
+                    soja: { use: 'Cualquier etapa post-lluvia', stage: 'Todas' },
+                    maiz: { use: 'Cualquier etapa post-lluvia', stage: 'Todas' },
+                    trigo: { use: 'Cualquier etapa post-lluvia', stage: 'Todas' },
+                    girasol: { use: 'Cualquier etapa post-lluvia', stage: 'Todas' },
+                    cebada: { use: 'Cualquier etapa post-lluvia', stage: 'Todas' },
+                    sorgo: { use: 'Cualquier etapa post-lluvia', stage: 'Todas' }
+                },
+                source: 'McFeeters, S.K. (1996). <strong>The use of the Normalized Difference Water Index (NDWI) in the delineation of open water features</strong>. International Journal of Remote Sensing, 17(7), 1425–1432.',
+                saturation: 0, sensitivityN: 0, soilCorrection: 0
+            }
+        ];
+
+        const PROBLEMS = [
+            {
+                id: 'vigor',
+                icon: 'fa-leaf',
+                title: 'Vigor general y biomasa',
+                desc: 'Diagnóstico rápido del estado fotosintético del cultivo y de la cantidad de biomasa verde activa.',
+                primary: 'NDVI',
+                others: ['GNDVI', 'OSAVI']
+            },
+            {
+                id: 'nitrogeno',
+                icon: 'fa-flask',
+                title: 'Estado nutricional · Nitrógeno',
+                desc: 'Detección de deficiencias de N para guiar refertilizaciones y prescripciones variables.',
+                primary: 'NDRE',
+                others: ['LCI']
+            },
+            {
+                id: 'clorofila',
+                icon: 'fa-sun',
+                title: 'Clorofila y fotosíntesis',
+                desc: 'Estimación del contenido de clorofila a nivel hoja y canopia, indicador de salud fisiológica.',
+                primary: 'GNDVI',
+                others: ['LCI', 'NDRE']
+            },
+            {
+                id: 'estres-temprano',
+                icon: 'fa-triangle-exclamation',
+                title: 'Detección temprana de estrés',
+                desc: 'Identificar problemas nutricionales o sanitarios antes de que sean visibles a campo.',
+                primary: 'NDRE',
+                others: ['LCI']
+            },
+            {
+                id: 'implantacion',
+                icon: 'fa-seedling',
+                title: 'Implantación y cobertura de suelo',
+                desc: 'Evaluación de fallas de siembra, calidad de stand y avance de la cobertura en etapas tempranas.',
+                primary: 'OSAVI',
+                others: ['NDVI']
+            },
+            {
+                id: 'malezas',
+                icon: 'fa-spray-can',
+                title: 'Mapa de malezas en barbecho',
+                desc: 'Detección de focos de malezas para prescripciones de aplicación variable de herbicidas.',
+                primary: 'NDVI',
+                others: ['OSAVI']
+            },
+            {
+                id: 'rendimiento',
+                icon: 'fa-chart-line',
+                title: 'Estimación de rendimiento',
+                desc: 'Predicción cuantitativa de rinde a partir de índices integrados durante el ciclo del cultivo.',
+                primary: 'NDRE',
+                others: ['NDVI', 'GNDVI']
+            },
+            {
+                id: 'anegamiento',
+                icon: 'fa-water',
+                title: 'Detección de anegamiento',
+                desc: 'Mapeo de zonas con agua superficial post-lluvia para evaluar impacto y planificar drenajes.',
+                primary: 'NDWI',
+                others: []
+            }
+        ];
+
+        // ─────────────────────────────────────────────────────────
+        // STATE
+        // ─────────────────────────────────────────────────────────
+        const state = {
+            mode: 'index',
+            crop: 'all',
+            stage: 'all'
+        };
+
+        // ─────────────────────────────────────────────────────────
+        // RENDER: INDEX CARDS
+        // ─────────────────────────────────────────────────────────
+        function renderIndices() {
+            const grid = document.getElementById('card-grid');
+            const meta = document.getElementById('results-meta');
+
+            const filtered = INDICES.filter(idx => {
+                const cropOk = state.crop === 'all' || idx.crops[state.crop];
+                const stageOk = state.stage === 'all' || idx.stages.includes(state.stage);
+                return cropOk && stageOk;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-filter"></i>
+                        <p>No hay índices que coincidan con los filtros seleccionados.</p>
+                    </div>`;
+                meta.textContent = '0 índices';
+                return;
+            }
+
+            meta.textContent = `${filtered.length} ${filtered.length === 1 ? 'índice disponible' : 'índices disponibles'}`;
+            grid.innerHTML = filtered.map(idx => `
+                <article class="idx-card" data-id="${idx.id}">
+                    <div class="idx-card-head">
+                        <div>
+                            <h3>${idx.id}</h3>
+                            <div class="idx-card-fullname">${idx.fullname}</div>
+                        </div>
+                        <span class="idx-card-tag">${idx.tag}</span>
+                    </div>
+                    <div class="idx-card-desc">${idx.short}</div>
+                    <div class="band-pills">
+                        ${idx.bands.map(b => `<span class="band-pill bp-${b}">${b}</span>`).join('')}
+                    </div>
+                    <div class="idx-card-foot">
+                        <span>${idx.bands.length} bandas</span>
+                        <span class="more">Ver detalle <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </article>
+            `).join('');
+
+            grid.querySelectorAll('.idx-card').forEach(card => {
+                card.addEventListener('click', () => openModal(card.dataset.id));
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // RENDER: PROBLEM CARDS
+        // ─────────────────────────────────────────────────────────
+        function renderProblems() {
+            const grid = document.getElementById('card-grid');
+            const meta = document.getElementById('results-meta');
+            meta.textContent = `${PROBLEMS.length} problemas agronómicos cubiertos`;
+
+            grid.innerHTML = PROBLEMS.map(p => `
+                <article class="prob-card">
+                    <div class="prob-icon"><i class="fas ${p.icon}"></i></div>
+                    <h3>${p.title}</h3>
+                    <p>${p.desc}</p>
+                    <div class="prob-recommendations">
+                        <span class="prob-rec-label">Índices recomendados</span>
+                        <div class="prob-rec-list">
+                            <span class="idx-pill primary" data-id="${p.primary}">${p.primary}</span>
+                            ${p.others.map(o => `<span class="idx-pill" data-id="${o}">${o}</span>`).join('')}
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+
+            grid.querySelectorAll('.idx-pill').forEach(pill => {
+                pill.addEventListener('click', () => openModal(pill.dataset.id));
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // MODAL
+        // ─────────────────────────────────────────────────────────
+        function openModal(id) {
+            const idx = INDICES.find(i => i.id === id);
+            if (!idx) return;
+
+            const cropList = state.crop === 'all'
+                ? Object.entries(idx.crops)
+                : Object.entries(idx.crops).filter(([c]) => c === state.crop);
+
+            document.getElementById('modal-header').innerHTML = `
+                <span class="eyebrow">${idx.tag}</span>
+                <h2>${idx.id}</h2>
+                <div class="modal-fullname">${idx.fullname}</div>
+                <div class="band-pills" style="margin-bottom: 0.8rem;">
+                    ${idx.bands.map(b => `<span class="band-pill bp-${b}">${b}</span>`).join('')}
+                </div>
+                <div class="modal-formula">${idx.formula}</div>
+            `;
+
+            document.getElementById('modal-body').innerHTML = `
+                <div class="modal-section">
+                    <h4>Qué mide y cómo funciona</h4>
+                    <p>${idx.description}</p>
+                </div>
+                <div class="modal-section">
+                    <h4>Pros y contras</h4>
+                    <div class="pros-cons">
+                        <div class="pc-block pros">
+                            <h5><i class="fas fa-circle-check"></i> Fortalezas</h5>
+                            <ul>${idx.pros.map(p => `<li>${p}</li>`).join('')}</ul>
+                        </div>
+                        <div class="pc-block cons">
+                            <h5><i class="fas fa-circle-info"></i> Limitaciones</h5>
+                            <ul>${idx.cons.map(c => `<li>${c}</li>`).join('')}</ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h4>Etapa fenológica óptima</h4>
+                    <div class="stages-bar">
+                        ${STAGES.map(s => {
+                            const active = idx.stages.includes(s.id);
+                            const peak = idx.peakStage === s.id;
+                            const cls = peak ? 'peak' : (active ? 'active' : '');
+                            return `<div class="stage-cell ${cls}">${s.label}</div>`;
+                        }).join('')}
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h4>Aplicación por cultivo</h4>
+                    <div class="crops-grid">
+                        ${cropList.map(([crop, info]) => `
+                            <div class="crop-item">
+                                <strong>${capitalize(crop)}</strong>
+                                <span>${info.stage}</span>
+                                <div style="margin-top: 0.4rem; color: var(--text-mid); font-size: 0.8rem;">${info.use}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h4>Fuente original</h4>
+                    <div class="modal-source">${idx.source}</div>
+                </div>
+            `;
+
+            document.getElementById('modal-backdrop').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-backdrop').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        // ─────────────────────────────────────────────────────────
+        // COMPARISON TABLE
+        // ─────────────────────────────────────────────────────────
+        function renderCompareTable() {
+            const tbody = document.getElementById('compare-table-body');
+            tbody.innerHTML = INDICES.map(idx => {
+                const peakStage = STAGES.find(s => s.id === idx.peakStage);
+                return `
+                    <tr>
+                        <td class="idx-name">${idx.id}</td>
+                        <td>${idx.tag}</td>
+                        <td>${peakStage ? peakStage.label : '—'}</td>
+                        <td><span class="sat-bar" style="--sat: ${idx.saturation}%;"></span></td>
+                        <td><span class="sat-bar" style="--sat: ${idx.sensitivityN}%;"></span></td>
+                        <td><span class="sat-bar" style="--sat: ${idx.soilCorrection}%;"></span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // RENDER ROUTER
+        // ─────────────────────────────────────────────────────────
+        function render() {
+            const stageFilter = document.querySelector('[data-stage]').closest('.filter-row');
+            const cropFilter = document.querySelector('[data-crop]').closest('.filter-row');
+            if (state.mode === 'problem') {
+                stageFilter.style.display = 'none';
+                cropFilter.style.display = 'none';
+                renderProblems();
+            } else {
+                stageFilter.style.display = '';
+                cropFilter.style.display = '';
+                renderIndices();
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────
+        // EVENT LISTENERS
+        // ─────────────────────────────────────────────────────────
+        document.querySelectorAll('.mode-toggle button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-toggle button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.mode = btn.dataset.mode;
+                render();
+            });
+        });
+
+        document.getElementById('crop-chips').addEventListener('click', e => {
+            if (!e.target.matches('.chip')) return;
+            document.querySelectorAll('#crop-chips .chip').forEach(c => c.classList.remove('active'));
+            e.target.classList.add('active');
+            state.crop = e.target.dataset.crop;
+            render();
+        });
+
+        document.getElementById('stage-chips').addEventListener('click', e => {
+            if (!e.target.matches('.chip')) return;
+            document.querySelectorAll('#stage-chips .chip').forEach(c => c.classList.remove('active'));
+            e.target.classList.add('active');
+            state.stage = e.target.dataset.stage;
+            render();
+        });
+
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        document.getElementById('modal-backdrop').addEventListener('click', e => {
+            if (e.target.id === 'modal-backdrop') closeModal();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ─────────────────────────────────────────────────────────
+        // INIT
+        // ─────────────────────────────────────────────────────────
+        render();
+        renderCompareTable();
+    </script>
+</body>
+</html>
