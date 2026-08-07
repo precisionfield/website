@@ -7,9 +7,25 @@
   <!-- Home -->
   <url>
     <loc>https://www.precisionfield.com.ar/</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+  </url>
+
+  <!-- Soluciones · detalle de los servicios de análisis satelital y de dron -->
+  <url>
+    <loc>https://www.precisionfield.com.ar/soluciones.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Consulta por lote · mapa satelital con dibujo de polígono -->
+  <url>
+    <loc>https://www.precisionfield.com.ar/consulta.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <!-- Guía interactiva de índices espectrales Mavic 3M -->
@@ -23,7 +39,7 @@
   <!-- Calculadora de vuelo y presupuesto Mavic 3M -->
   <url>
     <loc>https://www.precisionfield.com.ar/calculadora-mavic3m.html</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

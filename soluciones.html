@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soluciones | PrecisionField</title>
+    <meta name="description" content="Análisis de imágenes satelitales y de dron para el agro: ambientes productivos, monitoreo de cultivos, mapas de rendimiento, muestreo de suelos, malezas e inventario forestal. Qué resuelve cada servicio, cómo se hace y qué se entrega.">
+    <meta name="keywords" content="soluciones agricultura de precisión, imágenes satelitales, dron agrícola, mapa de ambientes, inventario forestal con drones, mapa de malezas, mapa de rendimiento, teledetección, PrecisionField">
+    <meta name="author" content="PrecisionField">
+    <link rel="canonical" href="https://www.precisionfield.com.ar/soluciones.html">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/images/PFIcon.ico" type="image/x-icon">
+    <style>
+    :root {
+        --green-deep:    #1a3a2a;
+        --green-mid:     #2d5a40;
+        --green-soft:    #4a7c59;
+        --green-light:   #7eb897;
+        --green-pale:    #e8f2ec;
+        --earth-dark:    #5c3d1e;
+        --earth-mid:     #b8702b;
+        --earth-light:   #d4956a;
+        --earth-pale:    #faf3ec;
+        --cream:         #f7f4ef;
+        --white:         #ffffff;
+        --text-dark:     #1c2820;
+        --text-mid:      #3d5248;
+        --text-light:    #6b8878;
+        --border:        #d4e2da;
+        --shadow-sm:     0 2px 12px rgba(26,58,42,0.08);
+        --shadow-md:     0 8px 32px rgba(26,58,42,0.12);
+        --radius-sm:     6px;
+        --radius-md:     12px;
+        --radius-lg:     20px;
+        --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; scroll-padding-top: 90px; }
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--cream);
+        color: var(--text-dark);
+        line-height: 1.7;
+        overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    body.no-scroll { overflow: hidden; }
+
+    h1, h2, h3, h4 {
+        font-family: 'Playfair Display', serif;
+        line-height: 1.2;
+        color: var(--green-deep);
+    }
+
+    .mono {
+        font-family: 'Space Mono', monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    /* ── HEADER ── */
+    header {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        background: rgba(247,244,239,0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+    }
+    .nav-container {
+        max-width: 1280px; margin: 0 auto;
+        padding: 0.9rem 2rem;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo img { height: 38px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-link {
+        font-size: 0.9rem; font-weight: 500; color: var(--text-mid);
+        transition: color var(--transition);
+    }
+    .nav-link:hover, .nav-link.active { color: var(--green-soft); }
+    .cta-link {
+        background: var(--green-deep); color: var(--white) !important;
+        padding: 0.55rem 1.3rem; border-radius: 100px;
+    }
+    .cta-link:hover { background: var(--green-soft); }
+    .nav-toggle {
+        display: none; flex-direction: column; gap: 5px;
+        background: none; border: none; cursor: pointer; padding: 6px;
+    }
+    .nav-toggle span {
+        display: block; width: 24px; height: 2px;
+        background: var(--green-deep); transition: var(--transition);
+    }
+
+    /* ── HERO ── */
+    .page-hero {
+        padding: 9rem 2rem 3.5rem;
+        max-width: 1280px; margin: 0 auto;
+    }
+    .breadcrumb {
+        font-size: 0.72rem; color: var(--text-light);
+        margin-bottom: 1.4rem;
+    }
+    .breadcrumb a:hover { color: var(--green-soft); }
+    .page-hero h1 {
+        font-size: clamp(2.4rem, 5.5vw, 3.9rem);
+        margin-bottom: 1.3rem;
+    }
+    .page-hero .lead {
+        font-size: 1.08rem; color: var(--text-mid);
+        max-width: 62ch;
+    }
+    .hero-rule {
+        width: 68px; height: 3px; background: var(--earth-mid);
+        margin: 1.6rem 0;
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+        max-width: 1280px; margin: 0 auto;
+        padding: 0 2rem 5rem;
+        display: grid; grid-template-columns: 250px 1fr;
+        gap: 3.5rem; align-items: start;
+    }
+
+    /* ── SIDEBAR INDEX ── */
+    .toc {
+        position: sticky; top: 92px;
+        max-height: calc(100vh - 120px); overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+    .toc-title {
+        font-size: 0.68rem; color: var(--text-light);
+        margin-bottom: 1rem; padding-bottom: 0.7rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .toc ol { list-style: none; counter-reset: toc; }
+    .toc li { counter-increment: toc; }
+    .toc a {
+        display: flex; gap: 0.6rem; align-items: baseline;
+        padding: 0.42rem 0;
+        font-size: 0.83rem; color: var(--text-mid);
+        border-left: 2px solid transparent; padding-left: 0.75rem;
+        transition: var(--transition);
+    }
+    .toc a::before {
+        content: counter(toc, decimal-leading-zero);
+        font-family: 'Space Mono', monospace;
+        font-size: 0.68rem; color: var(--text-light);
+        flex-shrink: 0;
+    }
+    .toc a:hover { color: var(--green-deep); border-left-color: var(--green-light); }
+    .toc a.active {
+        color: var(--green-deep); font-weight: 500;
+        border-left-color: var(--earth-mid);
+    }
+    .toc a.active::before { color: var(--earth-mid); }
+
+    /* ── SOLUTION CARD ── */
+    .solution {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 2.6rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+    .sol-num {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.72rem; letter-spacing: 0.16em;
+        color: var(--earth-mid); display: block; margin-bottom: 0.5rem;
+    }
+    .solution h2 {
+        font-size: clamp(1.55rem, 3vw, 2.05rem);
+        margin-bottom: 1.1rem;
+    }
+    .sol-lead { color: var(--text-mid); margin-bottom: 1.7rem; }
+
+    .objective {
+        background: var(--green-pale);
+        border-left: 3px solid var(--green-soft);
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        padding: 1.1rem 1.4rem;
+        margin-bottom: 2rem;
+    }
+    .objective .mono {
+        font-size: 0.66rem; color: var(--green-mid);
+        display: block; margin-bottom: 0.45rem;
+    }
+    .objective p { font-size: 0.95rem; color: var(--text-dark); }
+
+    .block-label {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--earth-mid);
+        padding-bottom: 0.6rem; margin-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .steps {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        gap: 1.4rem; margin-bottom: 2rem;
+    }
+    .step-n {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.85rem; color: var(--green-light);
+        display: block; margin-bottom: 0.35rem;
+    }
+    .step p { font-size: 0.85rem; color: var(--text-mid); line-height: 1.55; }
+
+    .two-col {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 2.4rem; margin-bottom: 1.8rem;
+    }
+    .dashed li {
+        position: relative; padding-left: 1.1rem;
+        font-size: 0.9rem; color: var(--text-mid);
+        margin-bottom: 0.68rem; line-height: 1.55;
+    }
+    .dashed li::before {
+        content: '—'; position: absolute; left: 0;
+        color: var(--earth-light);
+    }
+    .dashed strong { color: var(--green-deep); font-weight: 600; }
+
+    .note {
+        background: var(--earth-pale);
+        border-radius: var(--radius-sm);
+        padding: 0.9rem 1.2rem; margin-bottom: 1.8rem;
+        font-size: 0.87rem; color: var(--text-mid);
+    }
+    .note strong { color: var(--earth-dark); }
+
+    .meta-row {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        gap: 1.8rem; padding-top: 1.6rem;
+        border-top: 1px solid var(--border);
+    }
+    .meta-row .mono {
+        font-size: 0.62rem; color: var(--earth-mid);
+        display: block; margin-bottom: 0.4rem;
+    }
+    .meta-row p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.5; }
+    .meta-row a { color: var(--green-soft); border-bottom: 1px solid var(--border); }
+    .meta-row a:hover { border-bottom-color: var(--green-soft); }
+
+    .sol-tools {
+        display: flex; flex-wrap: wrap; gap: 0.7rem;
+        margin-bottom: 1.8rem;
+    }
+    .sol-tool {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: var(--green-pale); color: var(--green-mid);
+        padding: 0.5rem 1rem; border-radius: 100px;
+        font-size: 0.82rem; font-weight: 500;
+        transition: var(--transition);
+    }
+    .sol-tool:hover { background: var(--green-light); color: var(--green-deep); }
+
+    /* ── CLOSING CTA ── */
+    .closing {
+        background: var(--green-deep);
+        border-radius: var(--radius-lg);
+        padding: 3rem 2.6rem;
+        color: var(--green-pale);
+    }
+    .closing h2 { color: var(--white); font-size: 1.9rem; margin-bottom: 1rem; }
+    .closing > p { max-width: 60ch; margin-bottom: 2.2rem; font-size: 0.97rem; }
+    .process {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        gap: 1.6rem; margin-bottom: 2.4rem;
+        padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .process h4 { color: var(--white); font-size: 1rem; margin-bottom: 0.35rem; }
+    .process p { font-size: 0.83rem; opacity: 0.8; line-height: 1.5; }
+    .process .step-n { color: var(--earth-light); }
+    .closing-cta { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .btn {
+        display: inline-block; padding: 0.85rem 1.9rem;
+        border-radius: 100px; font-size: 0.9rem; font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-primary { background: var(--earth-mid); color: var(--white); }
+    .btn-primary:hover { background: var(--earth-light); }
+    .btn-outline { border: 1px solid rgba(255,255,255,0.35); color: var(--white); }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── FOOTER ── */
+    footer {
+        background: var(--green-deep); color: var(--green-pale);
+        padding: 2.6rem 2rem; margin-top: 3rem;
+    }
+    .footer-inner {
+        max-width: 1280px; margin: 0 auto;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 1.5rem; flex-wrap: wrap;
+    }
+    .footer-inner img { height: 34px; width: auto; }
+    .footer-center { text-align: center; flex: 1; }
+    .footer-center p { font-size: 0.8rem; opacity: 0.8; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+        .layout { grid-template-columns: 1fr; gap: 2rem; }
+        .toc {
+            position: static; max-height: none;
+            background: var(--white); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 1.4rem;
+        }
+        .toc ol { columns: 2; column-gap: 1.5rem; }
+    }
+    @media (max-width: 768px) {
+        .nav-toggle { display: flex; }
+        .nav-links {
+            position: fixed; inset: 0 0 0 auto; width: min(78%, 320px);
+            background: var(--cream); flex-direction: column;
+            justify-content: center; gap: 1.8rem;
+            transform: translateX(100%); transition: transform var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+        .nav-links.open { transform: translateX(0); }
+        .page-hero { padding: 7rem 1.3rem 2.5rem; }
+        .layout { padding: 0 1.3rem 3rem; }
+        .toc ol { columns: 1; }
+        .solution { padding: 1.6rem 1.3rem; border-radius: var(--radius-md); }
+        .steps, .two-col, .meta-row, .process { grid-template-columns: 1fr; gap: 1.3rem; }
+        .closing { padding: 2rem 1.4rem; }
+    }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="nav-container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo-color.png" alt="PrecisionField">
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html" class="nav-link">Inicio</a></li>
+            <li><a href="soluciones.html" class="nav-link active">Soluciones</a></li>
+            <li><a href="index.html#tools" class="nav-link">Herramientas</a></li>
+            <li><a href="index.html#about" class="nav-link">Nosotros</a></li>
+            <li><a href="index.html#contact" class="nav-link cta-link">Contacto</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="page-hero">
+    <p class="breadcrumb mono"><a href="index.html">Inicio</a> · Soluciones</p>
+    <h1>Análisis de imágenes<br>satelitales y de dron</h1>
+    <div class="hero-rule"></div>
+    <p class="lead">Series históricas de Sentinel-2 y radar, vuelos con cámara multiespectral y mapas de rendimiento, procesados con criterio agronómico para convertirse en mapas y decisiones concretas. Cada solución indica qué resuelve, cómo se hace, qué información necesita y qué se entrega.</p>
+</section>
+
+<div class="layout">
+
+    <!-- ÍNDICE -->
+    <aside class="toc">
+        <p class="toc-title mono">Soluciones</p>
+        <ol>
+            <li><a href="#diagnostico-productividad">Diagnóstico Estratégico de Productividad</a></li>
+            <li><a href="#monitoreo-cultivos">Monitoreo Integral de Cultivos</a></li>
+            <li><a href="#rendimiento-inteligente">Rendimiento Inteligente</a></li>
+            <li><a href="#muestreo-suelos">Muestreo Preciso de Suelos</a></li>
+            <li><a href="#riesgo-anegamiento">Diagnóstico de Riesgo de Anegamiento</a></li>
+            <li><a href="#danos-climaticos">Evaluación de Daños Climáticos</a></li>
+            <li><a href="#forrajero-ganadero">Monitoreo Forrajero y Ganadero</a></li>
+            <li><a href="#prediccion-rendimiento">Estimación y Predicción de Rendimiento</a></li>
+            <li><a href="#mapa-malezas">Mapa de Malezas y Prescripción de Herbicidas</a></li>
+            <li><a href="#procesamiento-dron">Procesamiento Agronómico de Imágenes de Dron</a></li>
+            <li><a href="#inventario-forestal">Inventario y Monitoreo Forestal</a></li>
+        </ol>
+    </aside>
+
+    <main>
+
+    <!-- 01 -->
+    <article class="solution" id="diagnostico-productividad">
+        <span class="sol-num">Solución 01</span>
+        <h2>Diagnóstico Estratégico de Productividad</h2>
+        <p class="sol-lead">Estudio integral que permite conocer, con base objetiva y datos históricos, cuál es el verdadero potencial de cada sector del lote. A través del análisis multitemporal de información satelital, imágenes aéreas de dron y mapas de rinde se identifican patrones estables de productividad, variabilidad espacial y comportamiento de los cultivos a lo largo del tiempo. Esto permite diferenciar ambientes de alta, media y baja productividad con respaldo estadístico y consistencia histórica.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Determinar con datos y respaldo histórico cuál es el verdadero potencial productivo de cada sector del lote, diferenciando patrones estructurales de comportamiento de los efectos coyunturales propios de una campaña particular.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Delimitación de lotes y control de calidad de las imágenes</p></div>
+            <div class="step"><span class="step-n">02</span><p>Construcción de la serie histórica normalizada</p></div>
+            <div class="step"><span class="step-n">03</span><p>Análisis de estabilidad y variabilidad espacial</p></div>
+            <div class="step"><span class="step-n">04</span><p>Zonificación y validación a campo</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Delimitación precisa de ambientes productivos.</li>
+                    <li>Asignación eficiente de insumos.</li>
+                    <li>Definición de esquemas de manejo diferencial.</li>
+                    <li>Evaluación de estrategias de intensificación o cambio de uso.</li>
+                    <li>Planificación de largo plazo basada en evidencia histórica.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que buscan maximizar la rentabilidad y tomar decisiones estratégicas con menor incertidumbre.</li>
+                    <li><strong>Asesores agronómicos</strong> que necesitan una herramienta objetiva para fundamentar recomendaciones de manejo, rotaciones, fertilización variable o inversiones en tecnología.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Serie satelital histórica de 10 o más campañas, mapas de rinde y vuelos de dron disponibles.</p></div>
+            <div><span class="mono">Entregables</span><p>Mapa de ambientes, capas SIG y estadística de productividad por ambiente.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#rendimiento-inteligente">Rendimiento Inteligente</a> · <a href="#muestreo-suelos">Muestreo Preciso de Suelos</a></p></div>
+        </div>
+    </article>
+
+    <!-- 02 -->
+    <article class="solution" id="monitoreo-cultivos">
+        <span class="sol-num">Solución 02</span>
+        <h2>Monitoreo Integral de Cultivos</h2>
+        <p class="sol-lead">Servicio de seguimiento continuo durante la campaña agrícola que combina imágenes satelitales de alta frecuencia y relevamientos específicos mediante dron con cámara multiespectral, para evaluar el estado real del cultivo y detectar desvíos productivos y anomalías en forma temprana: déficit nutricional, plagas y enfermedades, estrés hídrico.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Transformar información remota en decisiones agronómicas concretas, reduciendo la incertidumbre y mejorando la eficiencia en el uso de insumos.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Configuración de lotes y línea de base</p></div>
+            <div class="step"><span class="step-n">02</span><p>Actualización satelital periódica</p></div>
+            <div class="step"><span class="step-n">03</span><p>Detección de desvíos y vuelo dirigido</p></div>
+            <div class="step"><span class="step-n">04</span><p>Reporte con recomendaciones de manejo</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Ajustes de fertilización.</li>
+                    <li>Evaluación de respuesta a aplicaciones.</li>
+                    <li>Priorización de monitoreos presenciales.</li>
+                    <li>Manejo diferencial por ambientes.</li>
+                    <li>Evaluación de impacto de eventos climáticos.</li>
+                    <li>Estimaciones de evolución del cultivo durante la campaña.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que buscan anticiparse a los problemas y maximizar el rendimiento mediante decisiones oportunas.</li>
+                    <li><strong>Asesores agronómicos</strong> que necesitan herramientas objetivas para fundamentar recomendaciones técnicas y priorizar recorridas a campo de manera más eficiente.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sol-tools">
+            <a href="indices-mavic3m.html" class="sol-tool"><i class="fas fa-layer-group"></i> Guía de índices espectrales</a>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Perímetro de los lotes, cultivo y fecha de siembra; vuelos periódicos si se requiere mayor detalle.</p></div>
+            <div><span class="mono">Entregables</span><p>Reportes periódicos con mapas de índices, evolución del cultivo y alertas de desvío.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#procesamiento-dron">Procesamiento de Imágenes de Dron</a> · <a href="#danos-climaticos">Evaluación de Daños Climáticos</a></p></div>
+        </div>
+    </article>
+
+    <!-- 03 -->
+    <article class="solution" id="rendimiento-inteligente">
+        <span class="sol-num">Solución 03</span>
+        <h2>Rendimiento Inteligente</h2>
+        <p class="sol-lead">Este servicio transforma los datos crudos generados por la cosechadora en información estratégica para la toma de decisiones agronómicas. Los mapas de rendimiento originales suelen contener errores asociados a demoras del monitor, solapamientos, zonas de cabecera, cambios de velocidad, fallas de calibración y valores atípicos que, si no se procesan correctamente, llevan a interpretaciones equivocadas.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Obtener una delimitación confiable de ambientes de manejo que represente la verdadera variabilidad productiva del lote, evitando decisiones basadas en ruido o errores técnicos.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Importación de los datos crudos del monitor</p></div>
+            <div class="step"><span class="step-n">02</span><p>Depuración y corrección de errores sistemáticos</p></div>
+            <div class="step"><span class="step-n">03</span><p>Filtrado espacial, suavizado e interpolación</p></div>
+            <div class="step"><span class="step-n">04</span><p>Clasificación en ambientes homogéneos</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Definición de dosis variable de fertilizantes.</li>
+                    <li>Ajuste de densidad de siembra por ambiente.</li>
+                    <li>Identificación de zonas limitantes o de alto potencial.</li>
+                    <li>Evaluación de respuesta a manejos anteriores.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que desean implementar manejo por ambientes y aplicar insumos de manera más eficiente.</li>
+                    <li><strong>Asesores agronómicos</strong> que necesitan una base técnica sólida para fundamentar prescripciones de siembra variable, fertilización diferencial o ajustes en densidad y tecnología.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Archivos crudos del monitor de rendimiento, de cualquier marca de cosechadora.</p></div>
+            <div><span class="mono">Entregables</span><p>Mapa depurado e interpolado, mapa de ambientes y capas listas para cargar en el monitor.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#diagnostico-productividad">Diagnóstico Estratégico</a> · <a href="#muestreo-suelos">Muestreo Preciso de Suelos</a></p></div>
+        </div>
+    </article>
+
+    <!-- 04 -->
+    <article class="solution" id="muestreo-suelos">
+        <span class="sol-num">Solución 04</span>
+        <h2>Muestreo Preciso de Suelos</h2>
+        <p class="sol-lead">Servicio diseñado para reemplazar el muestreo tradicional “promedio de lote” por un enfoque de mayor precisión y respaldo agronómico. En lugar de tomar muestras al azar y obtener un único valor promedio que puede ocultar diferencias internas, el lote se divide previamente en ambientes productivos homogéneos —definidos a partir de mapas de rendimiento, análisis satelital o ambas fuentes— y las muestras se toman específicamente dentro de cada ambiente.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Detectar diferencias reales de fertilidad entre ambientes y generar información representativa para ajustar el manejo nutricional de manera precisa en cada uno de ellos.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Definición del criterio de muestreo</p></div>
+            <div class="step"><span class="step-n">02</span><p>Diseño del plan y de las zonas de exclusión</p></div>
+            <div class="step"><span class="step-n">03</span><p>Ejecución georreferenciada a campo</p></div>
+            <div class="step"><span class="step-n">04</span><p>Informe y capas para prescripción variable</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Ajuste de dosis de fertilización variable por ambiente.</li>
+                    <li>Identificación de zonas con deficiencias específicas.</li>
+                    <li>Optimización del uso de insumos.</li>
+                    <li>Reducción de sobre o sub-fertilización.</li>
+                    <li>Mayor eficiencia económica por hectárea.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que buscan maximizar el retorno de la inversión en fertilizantes y mejorar la eficiencia del sistema productivo.</li>
+                    <li><strong>Asesores agronómicos</strong> que necesitan una base técnica sólida para diseñar prescripciones variables con respaldo analítico.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Mapa de ambientes o de rendimiento, perímetro del lote y zonas de exclusión.</p></div>
+            <div><span class="mono">Entregables</span><p>Plan de muestreo georreferenciado, informe PDF y exportación a KML o shapefile.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#rendimiento-inteligente">Rendimiento Inteligente</a> · <a href="#diagnostico-productividad">Diagnóstico Estratégico</a></p></div>
+        </div>
+    </article>
+
+    <!-- 05 -->
+    <article class="solution" id="riesgo-anegamiento">
+        <span class="sol-num">Solución 05</span>
+        <h2>Diagnóstico de Riesgo de Anegamiento</h2>
+        <p class="sol-lead">Estudio multitemporal que permite identificar, cuantificar y mapear las áreas del lote que presentan recurrencia de excesos hídricos a lo largo de los años. Mediante el procesamiento de series históricas de imágenes satelitales se detectan los eventos de anegamiento ocurridos en distintas campañas y se calcula su frecuencia espacial, determinando qué sectores se inundan ocasionalmente y cuáles presentan un comportamiento estructural asociado a problemas de drenaje, topografía o napas altas.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Brindar una base objetiva para evaluar el riesgo hídrico del lote y su impacto en la productividad, evitando decisiones basadas únicamente en la percepción o en eventos aislados.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Selección de fechas posteriores a cada evento</p></div>
+            <div class="step"><span class="step-n">02</span><p>Detección de agua libre y suelo saturado</p></div>
+            <div class="step"><span class="step-n">03</span><p>Cálculo de la frecuencia de anegamiento</p></div>
+            <div class="step"><span class="step-n">04</span><p>Clasificación del riesgo y cálculo de superficies</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Ajustes en rotaciones y elección de cultivos.</li>
+                    <li>Definición de estrategias de manejo en zonas con riesgo hídrico.</li>
+                    <li>Evaluación de necesidad de obras de drenaje o nivelación.</li>
+                    <li>Replanteo de ambientes productivos con limitantes hídricas.</li>
+                    <li>Análisis de impacto económico de pérdidas recurrentes.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que desean reducir riesgos y planificar a largo plazo con información objetiva.</li>
+                    <li><strong>Asesores agronómicos</strong> que necesitan cuantificar el efecto de los excesos hídricos para fundamentar decisiones de manejo o inversión.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Perímetro del lote y serie histórica de imágenes ópticas y de radar.</p></div>
+            <div><span class="mono">Entregables</span><p>Mapa de frecuencia de anegamiento y superficies por nivel de riesgo hídrico.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#diagnostico-productividad">Diagnóstico Estratégico</a> · fotogrametría para obras de drenaje</p></div>
+        </div>
+    </article>
+
+    <!-- 06 -->
+    <article class="solution" id="danos-climaticos">
+        <span class="sol-num">Solución 06</span>
+        <h2>Evaluación de Daños Climáticos</h2>
+        <p class="sol-lead">Cuantificación objetiva del impacto de granizo, heladas, inundaciones, sequía o incendios sobre el lote. Se comparan imágenes previas y posteriores al evento para delimitar la superficie realmente afectada, clasificar la severidad del daño y estimar la pérdida relativa respecto del comportamiento esperado del lote. El resultado es un informe georreferenciado con superficies por nivel de afectación, disponible en pocos días.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Reemplazar la estimación visual y parcial por una medición documentada de la superficie y la severidad del daño, útil tanto para decidir a campo como para respaldar un reclamo.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Definición de la fecha exacta del evento</p></div>
+            <div class="step"><span class="step-n">02</span><p>Comparación de imágenes previas y posteriores</p></div>
+            <div class="step"><span class="step-n">03</span><p>Clasificación de la severidad del daño</p></div>
+            <div class="step"><span class="step-n">04</span><p>Informe con superficies por nivel de afectación</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Decisión de resiembra, cambio de cultivo o abandono del lote.</li>
+                    <li>Ajuste de la inversión en insumos sobre la superficie remanente.</li>
+                    <li>Respaldo documental ante aseguradoras, arrendadores o socios.</li>
+                    <li>Seguimiento de la recuperación del cultivo en las semanas posteriores.</li>
+                    <li>Cuantificación del impacto económico real del evento.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que necesitan dimensionar rápido la pérdida y decidir con plazos ajustados.</li>
+                    <li><strong>Asesores y aseguradoras</strong> que requieren una verificación independiente y georreferenciada del siniestro.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Fecha del evento y perímetro del lote; imágenes previas y posteriores, satelitales o de dron.</p></div>
+            <div><span class="mono">Entregables</span><p>Mapa de severidad, superficies afectadas por nivel e informe de respaldo para la aseguradora.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#monitoreo-cultivos">Monitoreo Integral de Cultivos</a> · <a href="#procesamiento-dron">Procesamiento de Imágenes de Dron</a></p></div>
+        </div>
+    </article>
+
+    <!-- 07 -->
+    <article class="solution" id="forrajero-ganadero">
+        <span class="sol-num">Solución 07</span>
+        <h2>Monitoreo Forrajero y Ganadero</h2>
+        <p class="sol-lead">Seguimiento de la oferta forrajera de pasturas, verdeos y campo natural a partir de imágenes satelitales, con estimación de biomasa en kg MS/ha calibrada con cortes reales a campo. Se complementa con relevamientos de dron para conteo de animales, inventario de infraestructura (aguadas, alambrados, molinos, caminos) y evaluación del estado de las pasturas.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Dar una base cuantitativa a las decisiones de pastoreo: saber cuánto forraje hay, dónde está y cómo evoluciona, sin depender exclusivamente de la recorrida.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Cortes de calibración a campo</p></div>
+            <div class="step"><span class="step-n">02</span><p>Ajuste del modelo biomasa – índice espectral</p></div>
+            <div class="step"><span class="step-n">03</span><p>Generación del mapa de biomasa por potrero</p></div>
+            <div class="step"><span class="step-n">04</span><p>Seguimiento y presupuesto forrajero</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Ajuste de carga animal y planificación de la rotación.</li>
+                    <li>Asignación de franjas y momento de entrada y salida de cada potrero.</li>
+                    <li>Elaboración y seguimiento del presupuesto forrajero.</li>
+                    <li>Detección temprana de degradación de pasturas.</li>
+                    <li>Priorización de resiembras y fertilización de pasturas.</li>
+                    <li>Inventario y control de infraestructura del establecimiento.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Ganaderos y establecimientos mixtos</strong> que buscan aumentar la eficiencia de uso del forraje producido.</li>
+                    <li><strong>Asesores ganaderos</strong> que necesitan datos consistentes para planificar la rotación y justificar decisiones de carga.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Perímetro de los potreros, cortes de forraje a campo y serie satelital continua.</p></div>
+            <div><span class="mono">Entregables</span><p>Mapa de biomasa en kg MS/ha, evolución por potrero y conteo de animales con dron.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#diagnostico-productividad">Diagnóstico Estratégico</a></p></div>
+        </div>
+    </article>
+
+    <!-- 08 -->
+    <article class="solution" id="prediccion-rendimiento">
+        <span class="sol-num">Solución 08</span>
+        <h2>Estimación y Predicción de Rendimiento</h2>
+        <p class="sol-lead">Modelos que traducen la información espectral en kilos por hectárea. Se combinan la serie de índices a lo largo del ciclo, las variables climáticas de la campaña y muestras de rendimiento tomadas a campo para estimar el rinde antes de la cosecha y, sobre todo, cómo se distribuye dentro del lote. El modelo se ajusta con datos del propio establecimiento y no con coeficientes genéricos de otra región.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Anticipar el rinde con semanas de anticipación y conocer su variabilidad espacial, para tomar decisiones comerciales, logísticas y de manejo con un número respaldado y no con una impresión de recorrida.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Muestras de rendimiento georreferenciadas a campo</p></div>
+            <div class="step"><span class="step-n">02</span><p>Serie de índices y variables climáticas del ciclo</p></div>
+            <div class="step"><span class="step-n">03</span><p>Ajuste y validación del modelo por cultivo y zona</p></div>
+            <div class="step"><span class="step-n">04</span><p>Mapa de rinde esperado y proyección del lote</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Anticipación del volumen para comercialización y contratos a fijar.</li>
+                    <li>Planificación de la logística de cosecha, acopio y transporte.</li>
+                    <li>Priorización del orden de cosecha entre lotes.</li>
+                    <li>Ajuste de las últimas aplicaciones según el techo de rinde esperado.</li>
+                    <li>Cuantificación de la brecha entre rinde potencial y alcanzado por ambiente.</li>
+                    <li>Evaluación objetiva del resultado de las decisiones de la campaña.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que necesitan anticipar volumen y comprometer entregas con menor riesgo.</li>
+                    <li><strong>Asesores agronómicos</strong> que buscan cuantificar la brecha de rendimiento por ambiente y medir el efecto real de sus recomendaciones.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Muestras de rendimiento a campo, serie satelital del ciclo, cultivo y fecha de siembra.</p></div>
+            <div><span class="mono">Entregables</span><p>Rinde estimado por lote y mapa de rendimiento esperado por ambiente, con su margen de error.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#rendimiento-inteligente">Rendimiento Inteligente</a> · <a href="#monitoreo-cultivos">Monitoreo Integral de Cultivos</a></p></div>
+        </div>
+    </article>
+
+    <!-- 09 -->
+    <article class="solution" id="mapa-malezas">
+        <span class="sol-num">Solución 09</span>
+        <h2>Mapa de Malezas y Prescripción de Herbicidas</h2>
+        <p class="sol-lead">Relevamiento con dron del barbecho o del cultivo para detectar y mapear los focos de malezas y convertirlos en una prescripción de aplicación selectiva. En lugar de pulverizar el lote completo a dosis plana, se trata solamente donde hay maleza y con la dosis que corresponde a cada zona. En barbechos con enmalezamiento parcial el ahorro de herbicida suele pagar el vuelo varias veces.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Pasar de la aplicación total a la aplicación dirigida: menos litros de herbicida, menos presión de selección sobre las malezas resistentes y una superficie tratada documentada, sin resignar control.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Vuelo de alta resolución sobre el barbecho o el cultivo</p></div>
+            <div class="step"><span class="step-n">02</span><p>Clasificación de vegetación verde y separación del rastrojo</p></div>
+            <div class="step"><span class="step-n">03</span><p>Delimitación de focos y cálculo de superficie enmalezada</p></div>
+            <div class="step"><span class="step-n">04</span><p>Generación de la prescripción para el monitor</p></div>
+        </div>
+
+        <div class="note">
+            <strong>El momento del vuelo es crítico.</strong> La maleza tiene que estar verde y el rastrojo seco: la ventana útil suele ser de pocos días y define la calidad de todo el mapa.
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Delimitación de las zonas a tratar y de la dosis para cada una.</li>
+                    <li>Cuantificación de la superficie realmente enmalezada del lote.</li>
+                    <li>Elección del producto y la mezcla según la especie y el tamaño predominante.</li>
+                    <li>Priorización de lotes y del momento de aplicación.</li>
+                    <li>Evaluación de la eficacia del control con un vuelo posterior.</li>
+                    <li>Registro histórico de focos recurrentes para anticipar la campaña siguiente.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores agropecuarios</strong> que aplican en barbecho y buscan reducir el costo de herbicida sin perder control.</li>
+                    <li><strong>Asesores agronómicos</strong> que necesitan documentar la superficie tratada y sostener una estrategia antirresistencia con evidencia.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sol-tools">
+            <a href="mapa-malezas-drones.html" class="sol-tool"><i class="fas fa-spray-can"></i> Herramienta: catálogo, calendario y ahorro</a>
+            <a href="calculadora-mavic3m.html" class="sol-tool"><i class="fas fa-calculator"></i> Calculadora de vuelo</a>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Vuelo con dron RGB o multiespectral, propio o realizado por PrecisionField, en la ventana previa a la aplicación.</p></div>
+            <div><span class="mono">Entregables</span><p>Mapa de focos, superficie enmalezada y prescripción lista para el monitor, en shapefile o ISOXML.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#procesamiento-dron">Procesamiento Agronómico de Imágenes de Dron</a> · <a href="#monitoreo-cultivos">Monitoreo Integral de Cultivos</a></p></div>
+        </div>
+    </article>
+
+    <!-- 10 -->
+    <article class="solution" id="procesamiento-dron">
+        <span class="sol-num">Solución 10</span>
+        <h2>Procesamiento Agronómico de Imágenes de Dron</h2>
+        <p class="sol-lead">Servicio diseñado para productores y asesores que cuentan con un UAV propio pero no disponen del tiempo, el hardware o el software especializado necesario para procesar correctamente las imágenes y convertirlas en herramientas agronómicas de alto valor. No se trata solo de generar un ortomosaico, sino de entregar mapas interpretados y listos para usar.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Transformar un vuelo en información útil para la toma de decisiones, entregando capas listas para cargar en el monitor de la maquinaria o en el SIG del asesor.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Recepción de las imágenes crudas del vuelo</p></div>
+            <div class="step"><span class="step-n">02</span><p>Corrección radiométrica y ortomosaico</p></div>
+            <div class="step"><span class="step-n">03</span><p>Cálculo de índices y clasificación</p></div>
+            <div class="step"><span class="step-n">04</span><p>Generación de la capa de prescripción</p></div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué tipo de mapas se pueden generar?</p>
+                <ul class="dashed">
+                    <li>Mapas de malezas para prescripción variable de herbicidas.</li>
+                    <li>Mapas de fertilización variable.</li>
+                    <li>Mapas de siembra variable.</li>
+                    <li>Mapas de fallas de implantación.</li>
+                    <li>Mapas de estrés hídrico o nutricional.</li>
+                    <li>Conteo y estimación de densidad de plantas.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Productores</strong> que realizan sus propios vuelos pero necesitan transformar las imágenes en decisiones técnicas concretas.</li>
+                    <li><strong>Asesores agronómicos</strong> que desean incorporar mapas de alta resolución a su estrategia de manejo sin invertir en infraestructura de procesamiento.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sol-tools">
+            <a href="calculadora-mavic3m.html" class="sol-tool"><i class="fas fa-calculator"></i> Calculadora de vuelo y presupuesto</a>
+            <a href="indices-mavic3m.html" class="sol-tool"><i class="fas fa-layer-group"></i> Guía de índices espectrales</a>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Imágenes crudas RGB o multiespectrales de cualquier UAV, con o sin panel de calibración.</p></div>
+            <div><span class="mono">Entregables</span><p>Ortomosaico, índices, mapas interpretados y prescripciones en shapefile o GeoTIFF.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#mapa-malezas">Mapa de Malezas</a> · <a href="#monitoreo-cultivos">Monitoreo Integral de Cultivos</a></p></div>
+        </div>
+    </article>
+
+    <!-- 11 -->
+    <article class="solution" id="inventario-forestal">
+        <span class="sol-num">Solución 11</span>
+        <h2>Inventario y Monitoreo Forestal</h2>
+        <p class="sol-lead">Relevamiento aéreo y satelital de plantaciones forestales para responder las tres preguntas que definen el negocio: cuántos árboles hay, cuánta madera hay en pie y qué está fallando. Con dron se obtiene el conteo censal y la altura de cada árbol, y sobre esa base se estima el volumen por rodal; con series satelitales se sigue la superficie efectivamente forestada, los cambios de uso y la recuperación posterior a un incendio. El inventario deja de apoyarse solo en parcelas extrapoladas a todo el macizo: el conteo y la altura pasan a medirse árbol por árbol, y las parcelas de campo quedan para calibrar el volumen.</p>
+
+        <div class="objective">
+            <span class="mono">Objetivo</span>
+            <p>Reemplazar el inventario manual —caro, lento y parcial— por una medición completa y georreferenciada del recurso forestal, que permita planificar raleos, cosecha y reposición con un número propio y actualizado.</p>
+        </div>
+
+        <p class="block-label">Cómo se hace</p>
+        <div class="steps">
+            <div class="step"><span class="step-n">01</span><p>Vuelo fotogramétrico y multiespectral sobre el rodal</p></div>
+            <div class="step"><span class="step-n">02</span><p>Modelo de superficie, de terreno y de altura de copas</p></div>
+            <div class="step"><span class="step-n">03</span><p>Conteo individual y altura, con volumen calibrado con parcelas de campo</p></div>
+            <div class="step"><span class="step-n">04</span><p>Seguimiento satelital de superficie, sanidad y disturbios</p></div>
+        </div>
+
+        <div class="note">
+            <strong>Qué se mide y qué se estima.</strong> El conteo y la altura se miden árbol por árbol sobre el modelo de altura de copas. El diámetro a la altura del pecho no es observable desde el aire: el volumen se estima mediante relaciones alométricas calibradas con parcelas del propio rodal. Por eso el vuelo no reemplaza al muestreo de campo, lo reduce y lo vuelve más representativo.
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p class="block-label">¿Qué decisiones permite mejorar?</p>
+                <ul class="dashed">
+                    <li>Cuantificación de la supervivencia post-plantación y de la superficie a reponer.</li>
+                    <li>Estimación del volumen en pie y del incremento medio anual entre vuelos.</li>
+                    <li>Planificación de raleos, turnos de corte y logística de cosecha.</li>
+                    <li>Detección temprana de focos sanitarios, hormiga o estrés hídrico.</li>
+                    <li>Evaluación de la superficie y la severidad de un incendio, y seguimiento de la recuperación.</li>
+                    <li>Verificación de superficie forestada y trazabilidad de origen para certificación y exportación.</li>
+                </ul>
+            </div>
+            <div>
+                <p class="block-label">¿Para quién está pensado?</p>
+                <ul class="dashed">
+                    <li><strong>Empresas y productores forestales</strong> que necesitan conocer el existente real de sus rodales sin depender de inventarios muestrales costosos.</li>
+                    <li><strong>Técnicos forestales y certificadoras</strong> que requieren evidencia georreferenciada de superficie, estado sanitario y cambios de uso del suelo.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta-row">
+            <div><span class="mono">Datos de entrada</span><p>Perímetro de los rodales, año de plantación y densidad de plantación; parcelas de campo para calibrar el volumen.</p></div>
+            <div><span class="mono">Entregables</span><p>Conteo por rodal, mapa de altura de copas, volumen estimado con su margen de error, capas SIG y serie histórica de superficie.</p></div>
+            <div><span class="mono">Se complementa con</span><p><a href="#danos-climaticos">Evaluación de Daños Climáticos</a> · <a href="#procesamiento-dron">Procesamiento de Imágenes de Dron</a></p></div>
+        </div>
+    </article>
+
+    <!-- CIERRE -->
+    <section class="closing">
+        <h2>Cada campo es distinto. El análisis también.</h2>
+        <p>Todos los servicios se ajustan a la escala, el sistema productivo y la información disponible de cada establecimiento. Se pueden contratar por lote, por establecimiento o por campaña, y se combinan entre sí. El primer paso siempre es la misma conversación: qué decisión hay que tomar y con qué datos se cuenta hoy.</p>
+
+        <div class="process">
+            <div><span class="step-n">01</span><h4>Diagnóstico inicial</h4><p>Relevamos objetivos, lotes e información existente.</p></div>
+            <div><span class="step-n">02</span><h4>Propuesta técnica</h4><p>Definimos alcance, entregables y plazos.</p></div>
+            <div><span class="step-n">03</span><h4>Procesamiento</h4><p>Análisis y generación de mapas y modelos.</p></div>
+            <div><span class="step-n">04</span><h4>Entrega e interpretación</h4><p>Informe, capas listas para usar y reunión de lectura.</p></div>
+        </div>
+
+        <div class="closing-cta">
+            <a href="consulta.html" class="btn btn-primary">Dibujá tu lote y pedí presupuesto</a>
+            <a href="https://wa.me/5491154251823" target="_blank" rel="noopener" class="btn btn-outline">Escribinos por WhatsApp</a>
+            <a href="index.html#contact" class="btn btn-outline">Todas las formas de contacto</a>
+        </div>
+    </section>
+
+    </main>
+</div>
+
+<footer>
+    <div class="footer-inner">
+        <img src="assets/images/logo.png" alt="PrecisionField">
+        <div class="footer-center">
+            <p>&copy; 2026 PrecisionField&reg;. Todos los derechos reservados.</p>
+            <p>Procesamiento y an&aacute;lisis de im&aacute;genes satelitales y de drones para el agro</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+(function () {
+    // Menú mobile
+    var toggle = document.getElementById('navToggle');
+    var links  = document.getElementById('navLinks');
+    if (toggle && links) {
+        toggle.addEventListener('click', function () {
+            var open = links.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            document.body.classList.toggle('no-scroll', open);
+        });
+        links.addEventListener('click', function (e) {
+            if (e.target.closest('a')) {
+                links.classList.remove('open');
+                toggle.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('no-scroll');
+            }
+        });
+    }
+
+    // Resaltado del índice según la sección visible
+    var entries = [].map.call(
+        document.querySelectorAll('.toc a[href^="#"]'),
+        function (a) {
+            return { link: a, section: document.querySelector(a.getAttribute('href')) };
+        }
+    ).filter(function (e) { return e.section; });
+
+    if (!entries.length || !('IntersectionObserver' in window)) return;
+
+    var visible = new Set();
+    var observer = new IntersectionObserver(function (records) {
+        records.forEach(function (r) {
+            if (r.isIntersecting) { visible.add(r.target); } else { visible.delete(r.target); }
+        });
+        var first = entries.filter(function (e) { return visible.has(e.section); })[0];
+        entries.forEach(function (e) {
+            e.link.classList.toggle('active', !!first && e === first);
+        });
+    }, { rootMargin: '-88px 0px -55% 0px' });
+
+    entries.forEach(function (e) { observer.observe(e.section); });
+})();
+</script>
+
+</body>
+</html>

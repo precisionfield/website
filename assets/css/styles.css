@@ -1208,3 +1208,83 @@ footer {
     .top-banner-inner { font-size: 0.75rem; }
     .service-card-featured::after { font-size: 0.55rem; padding: 0.2rem 0.45rem; }
 }
+
+/* ── CTA MAPA DE LOTE (sección contacto) ── */
+.contact-map-cta {
+    margin-top: 2.2rem;
+    padding: 1.8rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    max-width: 460px;
+}
+
+.cmc-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--green-pale);
+    color: var(--green-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+}
+
+.contact-map-cta h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.contact-map-cta p {
+    font-size: 0.92rem;
+    margin-bottom: 1.4rem;
+}
+
+.contact-map-cta .btn {
+    display: inline-block;
+    padding: 0.7rem 1.7rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .contact-map-cta { padding: 1.4rem; margin-top: 1.8rem; }
+}
+
+/* ── CIERRE DE LA GRILLA DE SERVICIOS ── */
+.services-footer {
+    max-width: 1280px;
+    margin: 3.5rem auto 0;
+    padding: 2.2rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.services-footer p {
+    color: var(--text-mid);
+    font-size: 0.95rem;
+    max-width: 58ch;
+    margin: 0 auto 1.6rem;
+}
+
+.services-footer-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    justify-content: center;
+}
+
+.services-footer-cta .btn {
+    padding: 0.75rem 1.8rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .services-footer { padding: 1.5rem 1.2rem; margin-top: 2.5rem; }
+    .services-footer-cta { flex-direction: column; }
+}

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujá tu lote y pedí presupuesto | PrecisionField</title>
+    <meta name="description" content="Buscá tu campo en el mapa satelital, dibujá el perímetro del lote y obtené la superficie en hectáreas al instante. Descargá el KML y pedí tu presupuesto de relevamiento con dron o análisis satelital.">
+    <meta name="keywords" content="medir lote online, calcular hectáreas mapa, dibujar poligono campo, presupuesto relevamiento dron, superficie lote satelital, PrecisionField">
+    <meta name="author" content="PrecisionField">
+    <link rel="canonical" href="https://www.precisionfield.com.ar/consulta.html">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.css">
+    <link rel="icon" href="assets/images/PFIcon.ico" type="image/x-icon">
+    <style>
+    :root {
+        --green-deep:    #1a3a2a;
+        --green-mid:     #2d5a40;
+        --green-soft:    #4a7c59;
+        --green-light:   #7eb897;
+        --green-pale:    #e8f2ec;
+        --earth-dark:    #5c3d1e;
+        --earth-mid:     #b8702b;
+        --earth-light:   #d4956a;
+        --earth-pale:    #faf3ec;
+        --cream:         #f7f4ef;
+        --white:         #ffffff;
+        --text-dark:     #1c2820;
+        --text-mid:      #3d5248;
+        --text-light:    #6b8878;
+        --border:        #d4e2da;
+        --shadow-sm:     0 2px 12px rgba(26,58,42,0.08);
+        --shadow-md:     0 8px 32px rgba(26,58,42,0.12);
+        --radius-sm:     6px;
+        --radius-md:     12px;
+        --radius-lg:     20px;
+        --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--cream);
+        color: var(--text-dark);
+        line-height: 1.7;
+        overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    body.no-scroll { overflow: hidden; }
+    h1, h2, h3, h4 {
+        font-family: 'Playfair Display', serif;
+        line-height: 1.2; color: var(--green-deep);
+    }
+    .mono {
+        font-family: 'Space Mono', monospace;
+        letter-spacing: 0.18em; text-transform: uppercase;
+    }
+
+    /* ── HEADER ── */
+    header {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 1200;
+        background: rgba(247,244,239,0.94);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+    }
+    .nav-container {
+        max-width: 1400px; margin: 0 auto; padding: 0.9rem 2rem;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo img { height: 38px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-link { font-size: 0.9rem; font-weight: 500; color: var(--text-mid); transition: color var(--transition); }
+    .nav-link:hover, .nav-link.active { color: var(--green-soft); }
+    .cta-link {
+        background: var(--green-deep); color: var(--white) !important;
+        padding: 0.55rem 1.3rem; border-radius: 100px;
+    }
+    .cta-link:hover { background: var(--green-soft); }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--green-deep); transition: var(--transition); }
+
+    /* ── HERO ── */
+    .page-hero { padding: 8rem 2rem 2rem; max-width: 1400px; margin: 0 auto; }
+    .breadcrumb { font-size: 0.72rem; color: var(--text-light); margin-bottom: 1.2rem; }
+    .breadcrumb a:hover { color: var(--green-soft); }
+    .page-hero h1 { font-size: clamp(2rem, 4.5vw, 3rem); margin-bottom: 0.9rem; }
+    .page-hero .lead { font-size: 1.02rem; color: var(--text-mid); max-width: 68ch; }
+
+    /* ── LAYOUT ── */
+    .workspace {
+        max-width: 1400px; margin: 0 auto; padding: 2rem 2rem 4rem;
+        display: grid; grid-template-columns: 1fr 370px; gap: 1.6rem; align-items: start;
+    }
+
+    /* ── MAPA ── */
+    .map-wrap {
+        position: relative;
+        border-radius: var(--radius-md); overflow: hidden;
+        border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+        background: var(--green-pale);
+    }
+    #map { height: 620px; width: 100%; background: #14211a; }
+
+    .map-search {
+        position: absolute; top: 12px; left: 12px; z-index: 500;
+        width: min(340px, calc(100% - 100px));
+    }
+    .search-box { position: relative; }
+    .search-box i {
+        position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+        color: var(--text-light); font-size: 0.85rem; pointer-events: none;
+    }
+    .search-box input {
+        width: 100%; padding: 0.7rem 2.4rem 0.7rem 2.3rem;
+        border: 1px solid var(--border); border-radius: 100px;
+        font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+        background: var(--white); color: var(--text-dark);
+        box-shadow: var(--shadow-sm); outline: none;
+    }
+    .search-box input:focus { border-color: var(--green-light); }
+    .search-spin {
+        position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+        color: var(--green-soft); font-size: 0.8rem; display: none;
+    }
+    .search-box.loading .search-spin { display: block; }
+    .search-results {
+        margin-top: 6px; background: var(--white);
+        border: 1px solid var(--border); border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-md); overflow: hidden; display: none;
+    }
+    .search-results.open { display: block; }
+    .search-results button {
+        display: block; width: 100%; text-align: left;
+        padding: 0.6rem 0.9rem; border: none; background: none;
+        font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+        color: var(--text-mid); cursor: pointer; line-height: 1.4;
+        border-bottom: 1px solid var(--border);
+    }
+    .search-results button:last-child { border-bottom: none; }
+    .search-results button:hover { background: var(--green-pale); color: var(--green-deep); }
+
+    .map-hint {
+        position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+        z-index: 500; background: rgba(26,58,42,0.92); color: var(--green-pale);
+        padding: 0.55rem 1.1rem; border-radius: 100px;
+        font-size: 0.8rem; white-space: nowrap;
+        pointer-events: none; transition: opacity var(--transition);
+    }
+    .map-hint.hidden { opacity: 0; }
+
+    .locate-btn {
+        position: absolute; top: 12px; right: 12px; z-index: 500;
+        width: 38px; height: 38px; border-radius: 50%;
+        border: 1px solid var(--border); background: var(--white);
+        color: var(--green-mid); cursor: pointer; font-size: 0.9rem;
+        box-shadow: var(--shadow-sm);
+        display: flex; align-items: center; justify-content: center;
+    }
+    .locate-btn:hover { background: var(--green-pale); }
+
+    /* ── PANEL ── */
+    .panel {
+        position: sticky; top: 88px;
+        display: flex; flex-direction: column; gap: 1rem;
+    }
+    .card {
+        background: var(--white); border: 1px solid var(--border);
+        border-radius: var(--radius-md); padding: 1.3rem;
+        box-shadow: var(--shadow-sm);
+    }
+    .card-label {
+        font-family: 'Space Mono', monospace; font-size: 0.63rem;
+        letter-spacing: 0.16em; text-transform: uppercase; color: var(--earth-mid);
+        display: block; margin-bottom: 0.9rem;
+        padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+    }
+
+    .steps-list li {
+        display: flex; gap: 0.7rem; align-items: baseline;
+        font-size: 0.85rem; color: var(--text-mid);
+        margin-bottom: 0.6rem; line-height: 1.5;
+    }
+    .steps-list li:last-child { margin-bottom: 0; }
+    .steps-list .n {
+        font-family: 'Space Mono', monospace; font-size: 0.7rem;
+        color: var(--green-light); flex-shrink: 0;
+    }
+
+    .readout { text-align: center; padding: 0.4rem 0 0.9rem; }
+    .readout .value {
+        font-family: 'Playfair Display', serif; font-size: 3rem;
+        color: var(--green-deep); line-height: 1;
+    }
+    .readout .unit { font-size: 1.1rem; color: var(--green-soft); margin-left: 0.2rem; }
+    .readout .sub { font-size: 0.78rem; color: var(--text-light); margin-top: 0.4rem; }
+    .readout.empty .value { color: var(--border); }
+
+    .facts { border-top: 1px solid var(--border); padding-top: 0.9rem; }
+    .fact { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.82rem; margin-bottom: 0.45rem; }
+    .fact:last-child { margin-bottom: 0; }
+    .fact span:first-child { color: var(--text-light); }
+    .fact span:last-child { color: var(--text-dark); font-weight: 500; text-align: right; }
+
+    .btn {
+        display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+        width: 100%; padding: 0.82rem 1.2rem; border-radius: 100px;
+        font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+        border: none; cursor: pointer; transition: var(--transition);
+        margin-bottom: 0.6rem; text-align: center;
+    }
+    .btn:last-child { margin-bottom: 0; }
+    .btn-wa { background: #25D366; color: var(--white); }
+    .btn-wa:hover { background: #1fb857; }
+    .btn-mail { background: var(--earth-mid); color: var(--white); }
+    .btn-mail:hover { background: var(--earth-dark); }
+
+    .btn-note {
+        font-size: 0.74rem; color: var(--text-light);
+        text-align: center; line-height: 1.45;
+        margin: -0.1rem 0 0.9rem;
+    }
+
+    .extras { margin-top: 0.9rem; border-top: 1px solid var(--border); padding-top: 0.9rem; }
+    .extras summary {
+        font-size: 0.8rem; color: var(--text-light);
+        cursor: pointer; list-style: none; user-select: none;
+        display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.8rem;
+    }
+    .extras summary::-webkit-details-marker { display: none; }
+    .extras summary::before { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.6rem; transition: transform var(--transition); }
+    .extras[open] summary::before { transform: rotate(180deg); }
+    .extras summary:hover { color: var(--green-soft); }
+    .btn-solid { background: var(--green-deep); color: var(--white); }
+    .btn-solid:hover { background: var(--green-soft); }
+    .btn-ghost { background: none; border: 1px solid var(--border); color: var(--text-mid); }
+    .btn-ghost:hover { border-color: var(--green-light); color: var(--green-deep); background: var(--green-pale); }
+    .btn[disabled] { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+    .privacy {
+        font-size: 0.75rem; color: var(--text-light);
+        background: var(--green-pale); border-radius: var(--radius-sm);
+        padding: 0.8rem 1rem; line-height: 1.5;
+    }
+    .privacy i { color: var(--green-soft); margin-right: 0.3rem; }
+
+    .disclaimer {
+        max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem;
+        font-size: 0.8rem; color: var(--text-light); line-height: 1.6;
+    }
+    .disclaimer strong { color: var(--text-mid); }
+
+    /* ── FOOTER ── */
+    footer { background: var(--green-deep); color: var(--green-pale); padding: 2.6rem 2rem; }
+    .footer-inner {
+        max-width: 1400px; margin: 0 auto; display: flex;
+        align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+    }
+    .footer-inner img { height: 34px; width: auto; }
+    .footer-center { text-align: center; flex: 1; }
+    .footer-center p { font-size: 0.8rem; opacity: 0.8; }
+
+    /* Geoman / Leaflet en la paleta del sitio */
+    .leaflet-container { font-family: 'DM Sans', sans-serif; }
+    .leaflet-control-attribution { font-size: 0.62rem; }
+
+    @media (max-width: 1024px) {
+        .workspace { grid-template-columns: 1fr; }
+        .panel { position: static; }
+        #map { height: 460px; }
+    }
+    @media (max-width: 768px) {
+        .nav-toggle { display: flex; }
+        .nav-links {
+            position: fixed; inset: 0 0 0 auto; width: min(78%, 320px);
+            background: var(--cream); flex-direction: column;
+            justify-content: center; gap: 1.8rem;
+            transform: translateX(100%); transition: transform var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+        .nav-links.open { transform: translateX(0); }
+        .page-hero { padding: 7rem 1.3rem 1.4rem; }
+        .workspace { padding: 1.2rem 1.3rem 3rem; }
+        .disclaimer { padding: 0 1.3rem 3rem; }
+        #map { height: 400px; }
+        .map-search { width: calc(100% - 70px); }
+        .map-hint { font-size: 0.72rem; white-space: normal; text-align: center; width: max-content; max-width: 90%; }
+    }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="nav-container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo-color.png" alt="PrecisionField">
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html" class="nav-link">Inicio</a></li>
+            <li><a href="soluciones.html" class="nav-link">Soluciones</a></li>
+            <li><a href="index.html#tools" class="nav-link">Herramientas</a></li>
+            <li><a href="index.html#about" class="nav-link">Nosotros</a></li>
+            <li><a href="index.html#contact" class="nav-link cta-link">Contacto</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="page-hero">
+    <p class="breadcrumb mono"><a href="index.html">Inicio</a> · Consulta por tu lote</p>
+    <h1>Dibujá tu lote y pedí presupuesto</h1>
+    <p class="lead">Buscá tu campo en el mapa satelital, marcá el perímetro del lote y obtené la superficie al instante. Con eso podés pedirnos un presupuesto concreto o calcular vos mismo el costo del relevamiento.</p>
+</section>
+
+<div class="workspace">
+
+    <!-- MAPA -->
+    <div class="map-wrap">
+        <div class="map-search">
+            <div class="search-box" id="searchBox">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Buscá tu localidad o campo…" autocomplete="off" aria-label="Buscar ubicación">
+                <i class="fas fa-circle-notch fa-spin search-spin"></i>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <button class="locate-btn" id="locateBtn" title="Usar mi ubicación" aria-label="Usar mi ubicación">
+            <i class="fas fa-location-crosshairs"></i>
+        </button>
+        <div id="map"></div>
+        <div class="map-hint" id="mapHint">Buscá tu campo y tocá el ícono del polígono para empezar a dibujar</div>
+    </div>
+
+    <!-- PANEL -->
+    <aside class="panel">
+
+        <div class="card">
+            <span class="card-label">Tu lote</span>
+            <div class="readout empty" id="readout">
+                <div><span class="value" id="areaValue">—</span><span class="unit">ha</span></div>
+                <p class="sub" id="areaSub">Todavía no dibujaste ningún lote</p>
+            </div>
+            <div class="facts" id="facts" hidden>
+                <div class="fact"><span>Perímetro</span><span id="factPerim">—</span></div>
+                <div class="fact"><span>Vértices</span><span id="factVerts">—</span></div>
+                <div class="fact"><span>Centro</span><span id="factCenter">—</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="card-label">Enviar la consulta</span>
+            <a class="btn btn-wa" id="btnWhatsapp" href="#" target="_blank" rel="noopener">
+                <i class="fab fa-whatsapp"></i> Consultar por WhatsApp
+            </a>
+            <a class="btn btn-mail" id="btnMail" href="#">
+                <i class="fas fa-envelope"></i> Consultar por mail
+            </a>
+            <p class="btn-note" id="btnNote">Se envía con el lote adentro del mensaje. No tenés que adjuntar nada.</p>
+            <a class="btn btn-solid" id="btnCalc" href="#">
+                <i class="fas fa-calculator"></i> Calcular el presupuesto
+            </a>
+
+            <details class="extras">
+                <summary>Otras opciones</summary>
+                <button class="btn btn-ghost" id="btnCopy" type="button">
+                    <i class="fas fa-link"></i> <span>Copiar el link del lote</span>
+                </button>
+                <button class="btn btn-ghost" id="btnKml" type="button">
+                    <i class="fas fa-download"></i> Descargar KML
+                </button>
+                <button class="btn btn-ghost" id="btnGeojson" type="button">
+                    <i class="fas fa-download"></i> Descargar GeoJSON
+                </button>
+            </details>
+        </div>
+
+        <div class="card">
+            <span class="card-label">Cómo funciona</span>
+            <ul class="steps-list">
+                <li><span class="n">01</span><span>Buscá tu localidad o usá el botón de ubicación.</span></li>
+                <li><span class="n">02</span><span>Tocá el ícono del polígono, arriba a la izquierda del mapa, y marcá los vértices del lote. Cerrá el polígono haciendo clic sobre el primer punto.</span></li>
+                <li><span class="n">03</span><span>Arrastrá los vértices para ajustar. La superficie se recalcula sola.</span></li>
+                <li><span class="n">04</span><span>Mandanos la consulta por WhatsApp o por mail. El lote viaja adentro del mensaje: no tenés que descargar ni adjuntar nada.</span></li>
+            </ul>
+        </div>
+
+        <p class="privacy">
+            <i class="fas fa-lock"></i>
+            El lote que dibujás no se sube a ningún servidor: se calcula en tu navegador y solo viaja cuando vos apretás un botón.
+        </p>
+
+    </aside>
+</div>
+
+<p class="disclaimer">
+    <strong>Sobre la precisión.</strong> La superficie que calcula esta herramienta sale del polígono que dibujás sobre la imagen satelital y sirve para presupuestar y dimensionar el trabajo. No reemplaza a una mensura ni a un plano catastral, y no tiene validez legal. Imágenes de fondo: Esri World Imagery. Búsqueda de lugares: OpenStreetMap / Nominatim.
+</p>
+
+<footer>
+    <div class="footer-inner">
+        <img src="assets/images/logo.png" alt="PrecisionField">
+        <div class="footer-center">
+            <p>&copy; 2026 PrecisionField&reg;. Todos los derechos reservados.</p>
+            <p>Procesamiento y an&aacute;lisis de im&aacute;genes satelitales y de drones para el agro</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.min.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    var WHATSAPP_NUMBER = '5491154251823';
+    var EMAIL_ADDRESS   = 'precisionfieldar' + '@' + 'gmail.com';
+    var MAX_URL_VERTS   = 250; // tope de seguridad: ~4 caracteres por vértice
+
+    // ── Menú mobile ──
+    var toggle = document.getElementById('navToggle');
+    var links  = document.getElementById('navLinks');
+    if (toggle && links) {
+        toggle.addEventListener('click', function () {
+            var open = links.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            document.body.classList.toggle('no-scroll', open);
+        });
+    }
+
+    // ── Mapa ──
+    var map = L.map('map', { zoomControl: true, attributionControl: true })
+               .setView([-34.6037, -58.3816], 5);
+
+    L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+            maxZoom: 19,
+            attribution: 'Imágenes &copy; Esri, Maxar, Earthstar Geographics y la comunidad de usuarios GIS'
+        }
+    ).addTo(map);
+
+    // Etiquetas de referencia por encima de la imagen
+    L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19, opacity: 0.9 }
+    ).addTo(map);
+
+    // ── Herramientas de dibujo ──
+    map.pm.addControls({
+        position: 'topleft',
+        drawMarker: false,
+        drawCircle: false,
+        drawCircleMarker: false,
+        drawPolyline: false,
+        drawRectangle: true,
+        drawPolygon: true,
+        drawText: false,
+        cutPolygon: false,
+        rotateMode: false,
+        editMode: true,
+        dragMode: true,
+        removalMode: true
+    });
+
+    map.pm.setPathOptions({
+        color: '#b8702b',
+        fillColor: '#d4956a',
+        fillOpacity: 0.25,
+        weight: 3
+    });
+
+    if (map.pm.setLang) { try { map.pm.setLang('es'); } catch (e) {} }
+
+    // ── Estado ──
+    var layer = null;
+
+    var elArea    = document.getElementById('areaValue');
+    var elSub     = document.getElementById('areaSub');
+    var elReadout = document.getElementById('readout');
+    var elFacts   = document.getElementById('facts');
+    var elPerim   = document.getElementById('factPerim');
+    var elVerts   = document.getElementById('factVerts');
+    var elCenter  = document.getElementById('factCenter');
+    var elHint    = document.getElementById('mapHint');
+
+    var btnWa   = document.getElementById('btnWhatsapp');
+    var btnMail = document.getElementById('btnMail');
+    var btnCalc = document.getElementById('btnCalc');
+    var btnKml  = document.getElementById('btnKml');
+    var btnGeo  = document.getElementById('btnGeojson');
+    var btnCopy = document.getElementById('btnCopy');
+    var btnNote = document.getElementById('btnNote');
+
+    var ACTIONS = [btnWa, btnMail, btnCalc, btnKml, btnGeo, btnCopy];
+
+    // ── Geometría ──
+    var R = 6378137; // radio ecuatorial WGS84
+    var rad = function (d) { return d * Math.PI / 180; };
+
+    // Área geodésica (excedente esférico). Devuelve m².
+    function geodesicArea(ring) {
+        var n = ring.length, sum = 0;
+        if (n < 3) return 0;
+        for (var i = 0; i < n; i++) {
+            var p1 = ring[i], p2 = ring[(i + 1) % n];
+            sum += (rad(p2.lng) - rad(p1.lng)) * (2 + Math.sin(rad(p1.lat)) + Math.sin(rad(p2.lat)));
+        }
+        return Math.abs(sum * R * R / 2);
+    }
+
+    function perimeter(ring) {
+        var total = 0;
+        for (var i = 0; i < ring.length; i++) {
+            total += map.distance(ring[i], ring[(i + 1) % ring.length]);
+        }
+        return total;
+    }
+
+    function centroid(ring) {
+        var a = 0, x = 0, y = 0;
+        for (var i = 0; i < ring.length; i++) {
+            var p1 = ring[i], p2 = ring[(i + 1) % ring.length];
+            var f = p1.lng * p2.lat - p2.lng * p1.lat;
+            a += f; x += (p1.lng + p2.lng) * f; y += (p1.lat + p2.lat) * f;
+        }
+        if (Math.abs(a) < 1e-12) {
+            var c = L.latLngBounds(ring).getCenter();
+            return { lat: c.lat, lng: c.lng };
+        }
+        a *= 0.5;
+        return { lat: y / (6 * a), lng: x / (6 * a) };
+    }
+
+    // Anillo exterior de la capa, sin el vértice de cierre duplicado
+    function ringOf(lyr) {
+        var ll = lyr.getLatLngs();
+        while (Array.isArray(ll[0])) { ll = ll[0]; }
+        var ring = ll.slice();
+        if (ring.length > 1) {
+            var f = ring[0], l = ring[ring.length - 1];
+            if (Math.abs(f.lat - l.lat) < 1e-12 && Math.abs(f.lng - l.lng) < 1e-12) { ring.pop(); }
+        }
+        return ring;
+    }
+
+    var nf = function (v, d) {
+        return v.toLocaleString('es-AR', { minimumFractionDigits: d, maximumFractionDigits: d });
+    };
+
+    // ── El lote viaja dentro del link ──
+    // Polilínea codificada (variante del algoritmo de Google) sobre un alfabeto
+    // de 64 caracteres que la URL no necesita escapar. Eso importa porque el link
+    // va dentro del cuerpo de un mailto:, que se vuelve a codificar: con comas y
+    // punto y coma cada separador pasaría a ocupar 5 caracteres en vez de 1.
+    // Los vértices se guardan como diferencias a 1e-5 grados (~1,1 m).
+    var A64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+    function encNum(num) {
+        var out = '';
+        while (num >= 0x20) {
+            out += A64.charAt(0x20 | (num & 0x1f));
+            num >>= 5;
+        }
+        return out + A64.charAt(num);
+    }
+
+    function encSigned(num) {
+        var s = num << 1;
+        if (num < 0) { s = ~s; }
+        return encNum(s);
+    }
+
+    function encodeRing(ring) {
+        var out = '', lastLat = 0, lastLng = 0;
+        for (var i = 0; i < ring.length; i++) {
+            var lat = Math.round(ring[i].lat * 1e5);
+            var lng = Math.round(ring[i].lng * 1e5);
+            out += encSigned(lat - lastLat) + encSigned(lng - lastLng);
+            lastLat = lat; lastLng = lng;
+        }
+        return out;
+    }
+
+    function decodeRing(str) {
+        if (!str || typeof str !== 'string') return null;
+        var pts = [], i = 0, lat = 0, lng = 0, n = str.length, bad = false;
+
+        function next() {
+            var result = 0, shift = 0, b;
+            do {
+                if (i >= n) { bad = true; return 0; }
+                b = A64.indexOf(str.charAt(i++));
+                if (b < 0) { bad = true; return 0; }
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+                if (shift > 30) { bad = true; return 0; }
+            } while (b >= 0x20);
+            return (result & 1) ? ~(result >> 1) : (result >> 1);
+        }
+
+        while (i < n && !bad) {
+            var dLat = next(), dLng = next();
+            if (bad) return null;
+            lat += dLat; lng += dLng;
+            var la = lat / 1e5, lo = lng / 1e5;
+            if (!Number.isFinite(la) || !Number.isFinite(lo)) return null;
+            if (la < -90 || la > 90 || lo < -180 || lo > 180) return null;
+            pts.push(L.latLng(la, lo));
+        }
+
+        return (!bad && pts.length >= 3) ? pts : null;
+    }
+
+    function shareUrl(ring) {
+        var base = location.origin && location.origin !== 'null'
+            ? location.origin + location.pathname
+            : 'https://www.precisionfield.com.ar/consulta.html';
+        return base + '?lote=' + encodeURIComponent(encodeRing(ring));
+    }
+
+    // ── Render ──
+    var current = null;
+
+    function clearState() {
+        current = null;
+        elReadout.classList.add('empty');
+        elArea.textContent = '—';
+        elSub.textContent = 'Todavía no dibujaste ningún lote';
+        elFacts.hidden = true;
+        elHint.classList.remove('hidden');
+        ACTIONS.forEach(function (b) { b.setAttribute('disabled', 'disabled'); });
+        btnWa.removeAttribute('href');
+        btnMail.removeAttribute('href');
+        btnCalc.removeAttribute('href');
+        btnNote.textContent = 'Se envía con el lote adentro del mensaje. No tenés que adjuntar nada.';
+    }
+
+    function update() {
+        if (!layer) { clearState(); return; }
+
+        var ring = ringOf(layer);
+        if (ring.length < 3) { clearState(); return; }
+
+        var m2 = geodesicArea(ring);
+        var ha = m2 / 10000;
+        var per = perimeter(ring);
+        var c = centroid(ring);
+
+        current = { ring: ring, ha: ha, per: per, c: c };
+
+        elReadout.classList.remove('empty');
+        elArea.textContent = nf(ha, ha < 10 ? 2 : 1);
+        elSub.textContent = nf(m2, 0) + ' m²';
+        elFacts.hidden = false;
+        elPerim.textContent = per >= 1000 ? nf(per / 1000, 2) + ' km' : nf(per, 0) + ' m';
+        elVerts.textContent = ring.length;
+        elCenter.textContent = c.lat.toFixed(5) + ', ' + c.lng.toFixed(5);
+        elHint.classList.add('hidden');
+
+        ACTIONS.forEach(function (b) { b.removeAttribute('disabled'); });
+
+        var perTxt = per >= 1000 ? nf(per / 1000, 2) + ' km' : nf(per, 0) + ' m';
+        var linkOk = ring.length <= MAX_URL_VERTS;
+        var link   = linkOk ? shareUrl(ring) : null;
+
+        current.link = link;
+
+        var lines = [
+            'Hola PrecisionField, quiero consultar por este lote:',
+            '',
+            '• Superficie: ' + nf(ha, 2) + ' ha',
+            '• Perímetro: ' + perTxt,
+            '• Ubicación: ' + c.lat.toFixed(6) + ', ' + c.lng.toFixed(6),
+            '• Ver en Google Maps: https://www.google.com/maps?q=' + c.lat.toFixed(6) + ',' + c.lng.toFixed(6)
+        ];
+
+        if (link) {
+            lines.push('');
+            lines.push('Abrí el lote dibujado en el mapa:');
+            lines.push(link);
+        } else {
+            lines.push('');
+            lines.push('(El lote tiene ' + ring.length + ' vértices: te adjunto el KML aparte.)');
+        }
+
+        var msg = lines.join('\n');
+
+        btnWa.href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
+        btnMail.href = 'mailto:' + EMAIL_ADDRESS +
+            '?subject=' + encodeURIComponent('Consulta por un lote de ' + ha.toFixed(2) + ' ha') +
+            '&body=' + encodeURIComponent(msg);
+        btnCalc.href = 'calculadora-mavic3m.html?ha=' + ha.toFixed(2);
+
+        btnNote.textContent = link
+            ? 'Se envía con el lote adentro del mensaje. No tenés que adjuntar nada.'
+            : 'El lote tiene demasiados vértices para el link: descargá el KML en "Otras opciones" y adjuntalo.';
+    }
+
+    function setLayer(lyr) {
+        if (layer && layer !== lyr) { map.removeLayer(layer); }
+        layer = lyr;
+        layer.on('pm:edit', update);
+        layer.on('pm:dragend', update);
+        layer.on('pm:remove', function () { layer = null; clearState(); });
+        update();
+    }
+
+    map.on('pm:create', function (e) { setLayer(e.layer); });
+    map.on('pm:remove', function (e) {
+        if (e.layer === layer) { layer = null; clearState(); }
+    });
+
+    clearState();
+
+    // ── Descargas ──
+    function download(name, mime, text) {
+        var blob = new Blob([text], { type: mime });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = name;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    function stamp() {
+        // Nombre de archivo con la superficie, para que se distinga si baja varios
+        return 'lote-' + current.ha.toFixed(2).replace('.', '_') + 'ha';
+    }
+
+    btnGeo.addEventListener('click', function () {
+        if (!current) return;
+        var coords = current.ring.map(function (p) { return [+p.lng.toFixed(7), +p.lat.toFixed(7)]; });
+        coords.push(coords[0]);
+        var gj = {
+            type: 'Feature',
+            properties: {
+                nombre: 'Lote consultado',
+                superficie_ha: +current.ha.toFixed(4),
+                perimetro_m: +current.per.toFixed(1),
+                origen: 'precisionfield.com.ar/consulta.html'
+            },
+            geometry: { type: 'Polygon', coordinates: [coords] }
+        };
+        download(stamp() + '.geojson', 'application/geo+json', JSON.stringify(gj, null, 2));
+    });
+
+    btnKml.addEventListener('click', function () {
+        if (!current) return;
+        var coords = current.ring.map(function (p) { return p.lng.toFixed(7) + ',' + p.lat.toFixed(7) + ',0'; });
+        coords.push(coords[0]);
+        var kml =
+'<?xml version="1.0" encoding="UTF-8"?>\n' +
+'<kml xmlns="http://www.opengis.net/kml/2.2">\n' +
+'  <Document>\n' +
+'    <name>Lote consultado - ' + current.ha.toFixed(2) + ' ha</name>\n' +
+'    <Style id="pf">\n' +
+'      <LineStyle><color>ff2b70b8</color><width>3</width></LineStyle>\n' +
+'      <PolyStyle><color>4d6a95d4</color></PolyStyle>\n' +
+'    </Style>\n' +
+'    <Placemark>\n' +
+'      <name>Lote ' + current.ha.toFixed(2) + ' ha</name>\n' +
+'      <description>Superficie: ' + current.ha.toFixed(2) + ' ha - Perimetro: ' + current.per.toFixed(0) + ' m - Generado en precisionfield.com.ar</description>\n' +
+'      <styleUrl>#pf</styleUrl>\n' +
+'      <Polygon><outerBoundaryIs><LinearRing><coordinates>\n' +
+'        ' + coords.join(' ') + '\n' +
+'      </coordinates></LinearRing></outerBoundaryIs></Polygon>\n' +
+'    </Placemark>\n' +
+'  </Document>\n' +
+'</kml>';
+        download(stamp() + '.kml', 'application/vnd.google-earth.kml+xml', kml);
+    });
+
+    // ── Copiar el link del lote ──
+    btnCopy.addEventListener('click', function () {
+        if (!current || !current.link) return;
+        var label = btnCopy.querySelector('span');
+        var original = label.textContent;
+        var done = function (ok) {
+            label.textContent = ok ? '¡Link copiado!' : 'No se pudo copiar';
+            setTimeout(function () { label.textContent = original; }, 2200);
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(current.link).then(function () { done(true); }, function () { done(false); });
+        } else {
+            var ta = document.createElement('textarea');
+            ta.value = current.link;
+            ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(ta);
+            done(ok);
+        }
+    });
+
+    // ── Reabrir un lote que llegó por link ──
+    (function restoreFromUrl() {
+        var raw;
+        try { raw = new URLSearchParams(location.search).get('lote'); } catch (e) { return; }
+        var ring = decodeRing(raw);
+        if (!ring) return;
+
+        var poly = L.polygon(ring, {
+            color: '#b8702b', fillColor: '#d4956a', fillOpacity: 0.25, weight: 3
+        }).addTo(map);
+
+        setLayer(poly);
+        map.fitBounds(poly.getBounds(), { padding: [40, 40], maxZoom: 17 });
+        elHint.textContent = 'Lote recibido por link. Podés editarlo arrastrando los vértices.';
+        elHint.classList.remove('hidden');
+        setTimeout(function () { elHint.classList.add('hidden'); }, 4500);
+    })();
+
+    // ── Búsqueda de lugares (Nominatim) ──
+    var input   = document.getElementById('searchInput');
+    var box     = document.getElementById('searchBox');
+    var results = document.getElementById('searchResults');
+    var timer = null, controller = null;
+
+    function closeResults() { results.classList.remove('open'); results.innerHTML = ''; }
+
+    input.addEventListener('input', function () {
+        var q = input.value.trim();
+        clearTimeout(timer);
+        if (q.length < 3) { closeResults(); box.classList.remove('loading'); return; }
+        timer = setTimeout(function () { search(q); }, 450);
+    });
+
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { closeResults(); input.blur(); }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!box.contains(e.target) && !results.contains(e.target)) { closeResults(); }
+    });
+
+    function search(q) {
+        if (controller) { controller.abort(); }
+        controller = new AbortController();
+        box.classList.add('loading');
+
+        var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=6&accept-language=es&q=' +
+                  encodeURIComponent(q);
+
+        fetch(url, { signal: controller.signal, headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .then(function (list) {
+                box.classList.remove('loading');
+                if (!list.length) {
+                    results.innerHTML = '<button type="button" disabled style="cursor:default">Sin resultados</button>';
+                    results.classList.add('open');
+                    return;
+                }
+                results.innerHTML = '';
+                list.forEach(function (item) {
+                    var b = document.createElement('button');
+                    b.type = 'button';
+                    b.textContent = item.display_name;
+                    b.addEventListener('click', function () {
+                        var bb = item.boundingbox;
+                        if (bb) {
+                            map.fitBounds([[+bb[0], +bb[2]], [+bb[1], +bb[3]]], { maxZoom: 16 });
+                        } else {
+                            map.setView([+item.lat, +item.lon], 15);
+                        }
+                        closeResults();
+                        input.value = '';
+                    });
+                    results.appendChild(b);
+                });
+                results.classList.add('open');
+            })
+            .catch(function (err) {
+                if (err && err.name === 'AbortError') return;
+                box.classList.remove('loading');
+                results.innerHTML = '<button type="button" disabled style="cursor:default">No se pudo buscar. Probá de nuevo.</button>';
+                results.classList.add('open');
+            });
+    }
+
+    // ── Mi ubicación ──
+    document.getElementById('locateBtn').addEventListener('click', function () {
+        if (!navigator.geolocation) { return; }
+        var btn = this;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+        navigator.geolocation.getCurrentPosition(
+            function (pos) {
+                map.setView([pos.coords.latitude, pos.coords.longitude], 16);
+                btn.innerHTML = '<i class="fas fa-location-crosshairs"></i>';
+            },
+            function () {
+                btn.innerHTML = '<i class="fas fa-location-crosshairs"></i>';
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    });
+
+})();
+</script>
+
+</body>
+</html>

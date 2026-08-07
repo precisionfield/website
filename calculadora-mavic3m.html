@@ -1142,6 +1142,14 @@
         whoFlies: 'client'
     };
 
+    // Superficie precargada desde consulta.html (?ha=48.60), acotada al rango del input
+    (() => {
+        const ha = parseFloat(new URLSearchParams(location.search).get('ha'));
+        if (Number.isFinite(ha) && ha > 0) {
+            state.area = Math.min(10000, Math.max(1, Math.round(ha * 100) / 100));
+        }
+    })();
+
     const PRICE_FULL_SERVICE = 6.5;
     const FULL_SERVICE_MIN_HA = 50;
 
