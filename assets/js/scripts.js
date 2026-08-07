@@ -117,3 +117,61 @@ revealEls.forEach(el => observer.observe(el));
         fel.textContent = email;
     }
 })();
+
+// ── FILTRO DE SERVICIOS POR RUBRO ──
+(() => {
+    const bar = document.getElementById('serviceFilters');
+    if (!bar) return;
+
+    const buttons = [...bar.querySelectorAll('.filter-btn')];
+    const cards   = [...document.querySelectorAll('.service-card[data-rubro]')];
+    if (!cards.length) return;
+
+    const VALIDOS = new Set(buttons.map(b => b.dataset.rubro));
+
+    function aplicar(rubro) {
+        if (!VALIDOS.has(rubro)) rubro = 'todos';
+
+        cards.forEach(card => {
+            const rubros = (card.dataset.rubro || '').split(' ');
+            const visible = rubro === 'todos' || rubros.includes(rubro);
+            card.classList.toggle('is-filtered', !visible);
+
+            // El scroll-reveal deja de observar tras el primer cruce: una tarjeta
+            // que estuvo oculta nunca lo dispara y volveria a aparecer en opacity 0.
+            if (visible) card.classList.add('visible');
+        });
+
+        buttons.forEach(b => {
+            const on = b.dataset.rubro === rubro;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+
+    bar.addEventListener('click', e => {
+        const btn = e.target.closest('.filter-btn');
+        if (!btn) return;
+        const rubro = btn.dataset.rubro;
+        aplicar(rubro);
+
+        // Deja el rubro en la URL para poder compartir la vista filtrada
+        try {
+            const url = new URL(location.href);
+            if (rubro === 'todos') url.searchParams.delete('rubro');
+            else url.searchParams.set('rubro', rubro);
+            history.replaceState(null, '', url.pathname + url.search + '#services');
+        } catch (err) { /* sin history no pasa nada grave */ }
+    });
+
+    // Filtro inicial desde la URL: index.html?rubro=forestal
+    let inicial = 'todos';
+    try { inicial = new URLSearchParams(location.search).get('rubro') || 'todos'; } catch (err) {}
+    if (inicial !== 'todos' && VALIDOS.has(inicial)) {
+        aplicar(inicial);
+        window.addEventListener('load', () => {
+            const s = document.getElementById('services');
+            if (s) s.scrollIntoView();
+        });
+    }
+})();

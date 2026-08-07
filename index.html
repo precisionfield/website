@@ -8,11 +8,11 @@
     <meta name="keywords" content="dron, drones, agricultura de precisión, fotogrametría, imágenes satelitales, teledetección, precisionfield">
     <meta name="author" content="PrecisionField">
     <link rel="canonical" href="https://www.precisionfield.com.ar/index.html">
-    <link rel="stylesheet" href="assets/css/styles.css?v=20260807">
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260807b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/images/PFIcon.ico" type="image/x-icon">
-    <script src="assets/js/scripts.js?v=20260807" defer></script>
+    <script src="assets/js/scripts.js?v=20260807b" defer></script>
 </head>
 <body>
 
@@ -96,9 +96,17 @@
             <p class="section-desc">Desde la adquisición de imágenes hasta el análisis avanzado, cubrimos todo el flujo de trabajo de la agricultura de precisión.</p>
         </div>
 
+
+        <div class="service-filters" id="serviceFilters" role="group" aria-label="Filtrar servicios por rubro">
+            <button type="button" class="filter-btn is-active" data-rubro="todos" aria-pressed="true">Todos</button>
+            <button type="button" class="filter-btn" data-rubro="agricultura" aria-pressed="false">Agricultura</button>
+            <button type="button" class="filter-btn" data-rubro="forestal" aria-pressed="false">Forestal y frutales</button>
+            <button type="button" class="filter-btn" data-rubro="ganaderia" aria-pressed="false">Ganadería</button>
+        </div>
+
         <div class="service-grid">
 
-            <div class="service-card service-card-featured" data-delay="0">
+            <div class="service-card service-card-featured" data-delay="0" data-rubro="agricultura ganaderia">
                 <div class="card-image">
                     <img src="assets/images/satellite.jpg" alt="Variabilidad productiva entre sectores de un campo">
                     <div class="card-image-overlay"></div>
@@ -123,7 +131,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="1">
+            <div class="service-card" data-delay="1" data-rubro="agricultura">
                 <div class="card-image">
                     <img src="assets/images/monitCult.jpg" alt="Monitoreo de cultivos">
                     <div class="card-image-overlay"></div>
@@ -149,7 +157,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="2">
+            <div class="service-card" data-delay="2" data-rubro="agricultura">
                 <div class="card-image">
                     <img src="assets/images/estSanit.jpg" alt="Detección de anomalías en el cultivo">
                     <div class="card-image-overlay"></div>
@@ -174,7 +182,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="3">
+            <div class="service-card" data-delay="3" data-rubro="agricultura">
                 <div class="card-image">
                     <img src="assets/images/mapPres.jpg" alt="Prescripción de insumos por ambiente">
                     <div class="card-image-overlay"></div>
@@ -199,7 +207,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="4">
+            <div class="service-card" data-delay="4" data-rubro="agricultura">
                 <div class="card-image">
                     <img src="assets/images/mapRinde.jpg" alt="Mapa de rendimiento procesado">
                     <div class="card-image-overlay"></div>
@@ -220,7 +228,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="5">
+            <div class="service-card" data-delay="5" data-rubro="agricultura forestal ganaderia">
                 <div class="card-image">
                     <img src="assets/images/inund.jpg" alt="Evaluación de daños climáticos">
                     <div class="card-image-overlay"></div>
@@ -245,7 +253,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="6">
+            <div class="service-card" data-delay="6" data-rubro="agricultura">
                 <div class="card-image">
                     <img src="assets/images/pulv.jpg" alt="Control de labores y aplicaciones">
                     <div class="card-image-overlay"></div>
@@ -260,7 +268,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="7">
+            <div class="service-card" data-delay="7" data-rubro="forestal">
                 <div class="card-image">
                     <img src="assets/images/forestal.jpg" alt="Inventario y monitoreo forestal con dron">
                     <div class="card-image-overlay"></div>
@@ -282,7 +290,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="8">
+            <div class="service-card" data-delay="8" data-rubro="forestal">
                 <div class="card-image">
                     <img src="assets/images/frutal.jpg" alt="Montes frutícolas">
                     <div class="card-image-overlay"></div>
@@ -297,7 +305,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="9">
+            <div class="service-card" data-delay="9" data-rubro="ganaderia">
                 <div class="card-image">
                     <img src="assets/images/animales.jpg" alt="Monitoreo forrajero y ganadero">
                     <div class="card-image-overlay"></div>
@@ -318,7 +326,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="10">
+            <div class="service-card" data-delay="10" data-rubro="agricultura forestal ganaderia">
                 <div class="card-image">
                     <img src="assets/images/fotogra.jpg" alt="Fotogrametría con dron">
                     <div class="card-image-overlay"></div>
@@ -333,7 +341,7 @@
                 </div>
             </div>
 
-            <div class="service-card" data-delay="11">
+            <div class="service-card" data-delay="11" data-rubro="agricultura forestal ganaderia">
                 <div class="card-image">
                     <img src="assets/images/m3m_1.jpg" alt="Procesamiento de imágenes de dron propio">
                     <div class="card-image-overlay"></div>
