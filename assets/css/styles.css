@@ -1342,3 +1342,18 @@ footer {
         padding: 0.5rem 1rem;
     }
 }
+
+/* ── FIX MENÚ MÓVIL (home) ──────────────────────────────────────
+   La lista centrada verticalmente se desbordaba fuera de la pantalla
+   cuando el desplegable de Herramientas está abierto: el primer ítem
+   quedaba debajo del logo y "Servicios" se cortaba por arriba.
+   Se alinea arriba, se deja aire para el header y se permite scroll. */
+@media (max-width: 768px) {
+    .nav-links {
+        justify-content: flex-start;
+        gap: 2rem;
+        padding: 5.75rem 1.5rem 3rem;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}

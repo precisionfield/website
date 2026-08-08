@@ -74,7 +74,9 @@
         padding: 0.9rem 2rem;
         display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo img { height: 38px; width: auto; }
+    .nav-logo { position: relative; display: block; }
+    .nav-logo .logo { height: 38px; width: auto; transition: opacity var(--transition); }
+    .nav-logo .logo-dark { position: absolute; top: 0; left: 0; opacity: 0; }
     .nav-links { display: flex; align-items: center; gap: 2rem; }
     .nav-link {
         font-size: 0.9rem; font-weight: 500; color: var(--text-mid);
@@ -313,15 +315,43 @@
         .toc ol { columns: 2; column-gap: 1.5rem; }
     }
     @media (max-width: 768px) {
-        .nav-toggle { display: flex; }
-        .nav-links {
-            position: fixed; inset: 0 0 0 auto; width: min(78%, 320px);
-            background: var(--cream); flex-direction: column;
-            justify-content: center; gap: 1.8rem;
-            transform: translateX(100%); transition: transform var(--transition);
-            box-shadow: var(--shadow-md);
+        /* El backdrop-filter del header crea un bloque contenedor para los
+           hijos position:fixed. Sin desactivarlo, el menu queda encerrado
+           dentro de la barra en lugar de cubrir la pantalla. */
+        header.menu-open {
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-bottom-color: transparent;
         }
-        .nav-links.open { transform: translateX(0); }
+        .nav-toggle { display: flex; position: relative; z-index: 1300; }
+        .nav-toggle.open span { background: var(--white); }
+        .nav-logo { position: relative; z-index: 1300; }
+        header.menu-open .logo-light { opacity: 0; }
+        header.menu-open .logo-dark  { opacity: 1; }
+        .nav-links {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: auto;
+            background: var(--green-deep);
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 2rem;
+            padding: 5.75rem 1.5rem 3rem;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            z-index: 1250;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity var(--transition), visibility var(--transition);
+        }
+        .nav-links.open { opacity: 1; visibility: visible; pointer-events: auto; }
+        .nav-link { color: var(--green-pale); font-size: 1.15rem; }
+        .nav-link:hover, .nav-link.active { color: var(--white); }
+        .cta-link { background: var(--earth-mid); font-size: 1.05rem; }
+        .cta-link:hover { background: var(--earth-light); }
         .page-hero { padding: 7rem 1.3rem 2.5rem; }
         .layout { padding: 0 1.3rem 3rem; }
         .toc ol { columns: 1; }
@@ -336,7 +366,8 @@
 <header>
     <nav class="nav-container">
         <a href="index.html" class="nav-logo">
-            <img src="assets/images/logo-color.png" alt="PrecisionField">
+            <img src="assets/images/logo-color.png" alt="PrecisionField" class="logo logo-light">
+            <img src="assets/images/logo.png" alt="PrecisionField" class="logo logo-dark">
         </a>
         <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
             <span></span><span></span><span></span>
@@ -950,18 +981,27 @@
     // Menú mobile
     var toggle = document.getElementById('navToggle');
     var links  = document.getElementById('navLinks');
+    var head   = document.querySelector('header');
+
+    function setMenu(open) {
+        links.classList.toggle('open', open);
+        toggle.classList.toggle('open', open);
+        // menu-open desactiva el backdrop-filter del header: si no, el header
+        // es el bloque contenedor del panel fixed y el menu queda encerrado.
+        if (head) head.classList.toggle('menu-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        document.body.classList.toggle('no-scroll', open);
+    }
+
     if (toggle && links) {
         toggle.addEventListener('click', function () {
-            var open = links.classList.toggle('open');
-            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-            document.body.classList.toggle('no-scroll', open);
+            setMenu(!links.classList.contains('open'));
         });
         links.addEventListener('click', function (e) {
-            if (e.target.closest('a')) {
-                links.classList.remove('open');
-                toggle.setAttribute('aria-expanded', 'false');
-                document.body.classList.remove('no-scroll');
-            }
+            if (e.target.closest('a')) { setMenu(false); }
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && links.classList.contains('open')) { setMenu(false); }
         });
     }
 
